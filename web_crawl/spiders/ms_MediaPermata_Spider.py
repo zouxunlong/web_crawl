@@ -7,8 +7,8 @@ import os
 import json
 
 
-class MediaPermataSpider(scrapy.Spider):
-    name = 'mediapermata'
+class ms_MediaPermata_Spider(scrapy.Spider):
+    name = 'ms_mediapermata'
     allowed_domains = ['mediapermata.com.bn']
     start_urls = [
         'https://mediapermata.com.bn/category/nasional/',
@@ -95,7 +95,7 @@ def main(output_path='mediapermata_ms.jl', start_date=(date.today() - timedelta(
             "USER_AGENT": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.88 Safari/537.36",
         }
     )
-    process.crawl(MediaPermataSpider, start_date=start_date, end_date=end_date)
+    process.crawl(ms_MediaPermata_Spider, start_date=start_date, end_date=end_date)
     crawler = list(process.crawlers)[0]
     process.start()
 

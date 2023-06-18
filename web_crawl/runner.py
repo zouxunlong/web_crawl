@@ -9,7 +9,7 @@ def main():
     settings = get_project_settings()
     configure_logging(settings)
     runner = CrawlerRunner(settings)
-    d = runner.crawl("en_Chinadaily",
+    d = runner.crawl("ms_Bernama",
                      start_date=(date.today() - timedelta(1)),
                      end_date=date.today())
     d.addBoth(lambda _: reactor.stop())
@@ -19,3 +19,4 @@ def main():
 if __name__ == "__main__":
     main()
     print("finished all", flush=True)
+

@@ -1,6 +1,7 @@
 import scrapy
 from datetime import time, datetime
 
+
 class en_ChinaDaily_Spider(scrapy.Spider):
     name = 'en_Chinadaily'
     allowed_domains = ['chinadaily.com.cn']
@@ -58,7 +59,7 @@ class en_ChinaDaily_Spider(scrapy.Spider):
         'https://www.chinadaily.com.cn/opinion/globalviews',
         'https://www.chinadaily.com.cn/opinion/commentator',
         'https://www.chinadaily.com.cn/opinion/opinionline',
-        ]
+    ]
 
     def __init__(self, start_date, end_date):
         self.start_date = start_date
@@ -66,28 +67,29 @@ class en_ChinaDaily_Spider(scrapy.Spider):
         self.end_time = datetime.combine(end_date, time())
 
     def parse(self, response):
-        articles = response.xpath('//div[@class="mb10 tw3_01_2" or @class="mb10 tw3_01_2 "]')
+        articles = response.xpath(
+            '//div[@class="mb10 tw3_01_2" or @class="mb10 tw3_01_2 "]')
         for article in articles:
-            date_time_str = article.xpath('.//span[@class="tw3_01_2_t"]/b/text()').get()
+            date_time_str = article.xpath(
+                './/span[@class="tw3_01_2_t"]/b/text()').get()
             date_time = datetime.strptime(date_time_str, "%Y-%m-%d %H:%M")
             if date_time < self.start_time:
                 return
             elif date_time < self.end_time:
                 date = str(date_time.date())
-                title = article.xpath('./span[@class="tw3_01_2_t"]/h4//text()').get()
+                title = article.xpath(
+                    './span[@class="tw3_01_2_t"]/h4//text()').get()
                 yield response.follow(url='https:' + article.xpath("(.//@href)").get(),
                                       callback=self.parse_article,
                                       cb_kwargs={"date": date, "title": title})
-        
+
         next_page_link = response.xpath('//a[text()="Next"]/@href').get()
         if next_page_link:
-            yield scrapy.Request('https:' + next_page_link, callback=self.parse)
-
+            yield scrapy.Request(url='https:' + next_page_link, callback=self.parse)
 
     def parse_article(self, response, *args, **kwargs):
         date = kwargs["date"]
         title = kwargs["title"]
-
         texts = response.xpath('//div[@id="Content"]/p//text()').getall()
         text = "\n".join(texts[:])
         if text:
@@ -99,4 +101,3 @@ class en_ChinaDaily_Spider(scrapy.Spider):
         pass
     scrapy.utils.misc.warn_on_generator_with_return_value = warn_on_generator_with_return_value_stub
     scrapy.core.scraper.warn_on_generator_with_return_value = warn_on_generator_with_return_value_stub
-

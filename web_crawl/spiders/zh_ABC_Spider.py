@@ -1,9 +1,5 @@
-from datetime import date, time, datetime, timedelta
 import scrapy
-from scrapy.crawler import CrawlerRunner
-from scrapy.utils.log import configure_logging
-from twisted.internet import reactor
-from scrapy.utils.project import get_project_settings
+from datetime import time, datetime
 import json
 
 
@@ -51,18 +47,3 @@ class zh_ABC_Spider(scrapy.Spider):
     scrapy.utils.misc.warn_on_generator_with_return_value = warn_on_generator_with_return_value_stub
     scrapy.core.scraper.warn_on_generator_with_return_value = warn_on_generator_with_return_value_stub
 
-
-def main():
-    settings = get_project_settings()
-    configure_logging(settings)
-    runner = CrawlerRunner(settings)
-    d = runner.crawl(zh_ABC_Spider,
-                     start_date=(date.today() - timedelta(1)),
-                     end_date=date.today())
-    d.addBoth(lambda _: reactor.stop())
-    reactor.run()
-
-
-if __name__ == "__main__":
-    main()
-    print("finished all", flush=True)
