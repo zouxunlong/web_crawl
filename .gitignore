@@ -1,2 +1,4 @@
 data
 scripts
+web_crawl/__pycache__
+web_crawl/spiders/__pycache__
