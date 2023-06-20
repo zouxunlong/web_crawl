@@ -9,11 +9,6 @@ class en_CNA_Spider(scrapy.Spider):
     allowed_domains = ["www.channelnewsasia.com"]
     custom_settings={"DOWNLOAD_DELAY" : 0.5}
 
-    def __init__(self, start_date, end_date):
-        self.start_date = start_date
-        self.start_time = datetime.combine(start_date, time())
-        self.end_time = datetime.combine(end_date, time())
-
     start_urls_0 = ["https://www.channelnewsasia.com/api/v1/infinitelisting/94f7cd75-c28b-4c0a-8d21-09c6ba3dd3fc?_format=json&viewMode=infinite_scroll_listing&page=%d" %
                   n for n in range(1, 1685)]
     start_urls_1 = ["https://www.channelnewsasia.com/api/v1/infinitelisting/18e56af5-db43-434c-b76b-8c7a766235ef?_format=json&viewMode=infinite_scroll_listing&page=%d" %
@@ -23,6 +18,12 @@ class en_CNA_Spider(scrapy.Spider):
     start_urls_3 = ["https://www.channelnewsasia.com/api/v1/infinitelisting/1da7e932-70b3-4a2e-891f-88f7dd72c9d6?_format=json&viewMode=infinite_scroll_listing&page=%d" %
                   n for n in range(1, 956)]
     start_urls = start_urls_0+start_urls_1+start_urls_2+start_urls_3
+
+
+    def __init__(self, start_date, end_date):
+        self.start_date = start_date
+        self.start_time = datetime.combine(start_date, time())
+        self.end_time = datetime.combine(end_date, time())
 
     def parse(self, response):
         data = json.loads(response.body)

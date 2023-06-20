@@ -9,8 +9,8 @@ def main():
     settings = get_project_settings()
     configure_logging(settings)
     runner = CrawlerRunner(settings)
-    d = runner.crawl("ms_Bernama",
-                     start_date=(date.today() - timedelta(1)),
+    d = runner.crawl("en_TheMoscowTimes",
+                     start_date=(date.today() - timedelta(5)),
                      end_date=date.today())
     d.addBoth(lambda _: reactor.stop())
     reactor.run()
