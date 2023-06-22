@@ -7,7 +7,7 @@ class en_CNA_Spider(scrapy.Spider):
 
     name = "en_CNA"
     allowed_domains = ["www.channelnewsasia.com"]
-    custom_settings = {"DOWNLOAD_DELAY": 1, "RANDOMIZE_DOWNLOAD_DELAY": False}
+    custom_settings = {"DOWNLOAD_DELAY": 0.5}
 
     start_urls_0 = ["https://www.channelnewsasia.com/api/v1/infinitelisting/94f7cd75-c28b-4c0a-8d21-09c6ba3dd3fc?_format=json&viewMode=infinite_scroll_listing&page=%d" %
                     n for n in range(1, 1685)]
@@ -32,15 +32,15 @@ class en_CNA_Spider(scrapy.Spider):
             date_time = datetime.strptime(
                 item["release_date"], "%Y-%m-%dT%H:%M:%S%z").replace(tzinfo=None)
 
-            if date_time < self.start_time:
-                return
-            elif date_time < self.end_time:
-                date = str(date_time.date())
-                title = item["title"]
+            # if date_time < self.start_time:
+            #     return
+            # elif date_time < self.end_time:
+            date = str(date_time.date())
+            title = item["title"]
 
-                yield scrapy.Request(url=item["absolute_url"],
-                                     callback=self.parse_article,
-                                     cb_kwargs={"date": date, "title": title})
+            yield scrapy.Request(url=item["absolute_url"],
+                                    callback=self.parse_article,
+                                    cb_kwargs={"date": date, "title": title})
 
     def parse_article(self, response, *args, **kwargs):
         date = kwargs["date"]

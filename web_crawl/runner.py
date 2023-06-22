@@ -22,7 +22,7 @@ def main_process():
     process.crawl("en_BBC", start_date=(date.today() - timedelta(5)), end_date=date.today())
     process.crawl("en_Bernama", start_date=(date.today() - timedelta(5)), end_date=date.today())
     process.crawl("en_Chinadaily", start_date=(date.today() - timedelta(5)), end_date=date.today())
-    process.crawl("en_CNA", start_date=(date.today() - timedelta(5)), end_date=date.today())
+    # process.crawl("en_CNA", start_date=(date.today() - timedelta(5)), end_date=date.today())
     process.crawl("en_france24news", start_date=(date.today() - timedelta(5)), end_date=date.today())
     process.crawl("en_koreaherald", start_date=(date.today() - timedelta(5)), end_date=date.today())
     process.crawl("en_TheMoscowTimes", start_date=(date.today() - timedelta(5)), end_date=date.today())

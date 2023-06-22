@@ -23,11 +23,12 @@ DOWNLOADER_MIDDLEWARES = {
     "scrapy.downloadermiddlewares.useragent.UserAgentMiddleware": None,
 }
 LOG_LEVEL = "INFO"
-COOKIES_ENABLED = False
-RETRY_ENABLED = False
-DOWNLOAD_TIMEOUT = 60
+RETRY_ENABLED = True
+DOWNLOAD_TIMEOUT = 15
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 FEED_EXPORT_ENCODING = "utf-8"
+
+
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'web_crawl (+http://www.yourdomain.com)'
@@ -47,7 +48,7 @@ FEED_EXPORT_ENCODING = "utf-8"
 # CONCURRENT_REQUESTS_PER_IP = 16
 
 # Disable cookies (enabled by default)
-# COOKIES_ENABLED = False
+COOKIES_ENABLED = False
 
 # Disable Telnet Console (enabled by default)
 # TELNETCONSOLE_ENABLED = False
@@ -64,11 +65,6 @@ FEED_EXPORT_ENCODING = "utf-8"
 #    'web_crawl.middlewares.WebCrawlSpiderMiddleware': 543,
 # }
 
-# Enable or disable downloader middlewares
-# See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-# DOWNLOADER_MIDDLEWARES = {
-#    'web_crawl.middlewares.WebCrawlDownloaderMiddleware': 543,
-# }
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
@@ -84,7 +80,7 @@ FEED_EXPORT_ENCODING = "utf-8"
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
-# AUTOTHROTTLE_ENABLED = True
+AUTOTHROTTLE_ENABLED = True
 # The initial download delay
 # AUTOTHROTTLE_START_DELAY = 5
 # The maximum download delay to be set in case of high latencies
