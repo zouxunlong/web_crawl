@@ -1,10 +1,6 @@
 import scrapy
-from datetime import date, time, datetime, timezone, timedelta
-from pathlib import Path
-from scrapy.crawler import CrawlerProcess
-import plac
-import os
-import json
+from datetime import time, datetime
+
 
 class ta_Dinamani_Spider(scrapy.Spider):
     name = 'ta_dinamani'

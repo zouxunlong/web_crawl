@@ -3,7 +3,7 @@ from datetime import time, datetime, timedelta
 
 
 class zh_Zaobao_Spider(scrapy.Spider):
-    name = 'zh_Zaobao'
+    name = 'zh_zaobao'
     allowed_domains = ['zaobao.com.sg']
     start_urls = [
         'https://zaobao.com.sg/realtime/singapore',
