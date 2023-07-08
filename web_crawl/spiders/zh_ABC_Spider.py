@@ -6,8 +6,7 @@ import json
 class zh_ABC_Spider(scrapy.Spider):
     name = 'zh_ABC'
     allowed_domains = ['abc.net.au']
-    start_urls = [
-        'https://www.abc.net.au/news-web/api/loader/channelrefetch?name=PaginationArticles&documentId=13544740&size=250&total=250']
+    start_urls = ['https://www.abc.net.au/news-web/api/loader/channelrefetch?name=PaginationArticles&documentId=13544740&size=250&total=250']
 
     def __init__(self, start_date, end_date):
         self.start_date = start_date
