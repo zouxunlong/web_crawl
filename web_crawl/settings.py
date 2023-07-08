@@ -13,7 +13,7 @@ SPIDER_MODULES = ['web_crawl.spiders']
 NEWSPIDER_MODULE = 'web_crawl.spiders'
 
 FEEDS = {
-    "./data/%(name)s/%(start_date)s.jsonl": {
+    "./data/%(name)s/%(start_date)s_%(end_date)s.jsonl": {
         "format": "jsonlines",
         "overwrite": True,
     }
@@ -80,7 +80,7 @@ COOKIES_ENABLED = False
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
-AUTOTHROTTLE_ENABLED = True
+AUTOTHROTTLE_ENABLED = False
 # The initial download delay
 # AUTOTHROTTLE_START_DELAY = 5
 # The maximum download delay to be set in case of high latencies

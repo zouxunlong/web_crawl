@@ -26,6 +26,7 @@ class en_Bernama_Spider(scrapy.Spider):
 
     def __init__(self, start_date, end_date):
         self.start_date = start_date
+        self.end_date = end_date
         self.start_time = datetime.combine(start_date, time())
         self.end_time = datetime.combine(end_date, time())
 
@@ -73,18 +74,3 @@ class en_Bernama_Spider(scrapy.Spider):
     scrapy.utils.misc.warn_on_generator_with_return_value = warn_on_generator_with_return_value_stub
     scrapy.core.scraper.warn_on_generator_with_return_value = warn_on_generator_with_return_value_stub
 
-
-def main():
-    settings = get_project_settings()
-    configure_logging(settings)
-    runner = CrawlerRunner(settings)
-    d = runner.crawl(en_Bernama_Spider,
-                     start_date=(date.today() - timedelta(1)),
-                     end_date=date.today())
-    d.addBoth(lambda _: reactor.stop())
-    reactor.run()
-
-
-if __name__ == "__main__":
-    main()
-    print("finished all", flush=True)

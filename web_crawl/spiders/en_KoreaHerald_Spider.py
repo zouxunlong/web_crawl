@@ -9,6 +9,7 @@ class en_KoreaHerald_Spider(scrapy.Spider):
 
     def __init__(self, start_date, end_date):
         self.start_date = start_date
+        self.end_date = end_date
         self.start_time = datetime.combine(start_date, time())
         self.end_time = datetime.combine(end_date, time())
         self.base_url = 'https://www.koreaherald.com/list.php?ct=020000000000&np='

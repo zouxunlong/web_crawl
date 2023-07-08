@@ -12,6 +12,7 @@ class zh_USChinaPress_Spider(scrapy.Spider):
 
     def __init__(self, start_date, end_date):
         self.start_date = start_date
+        self.end_date = end_date
         self.start_time = datetime.combine(start_date, time())
         self.end_time = datetime.combine(end_date, time())
         self.base_url_1 = 'https://cms.offshoremedia.net/front/list/getHotRecommended?pageNum='
