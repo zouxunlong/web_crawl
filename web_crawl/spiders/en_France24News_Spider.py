@@ -46,7 +46,6 @@ class en_France24News_Spider(scrapy.Spider):
 
     def warn_on_generator_with_return_value_stub(spider, callable):
         pass
-
     scrapy.utils.misc.warn_on_generator_with_return_value = warn_on_generator_with_return_value_stub
     scrapy.core.scraper.warn_on_generator_with_return_value = warn_on_generator_with_return_value_stub
 

@@ -68,8 +68,9 @@ class en_ChinaDaily_Spider(scrapy.Spider):
         self.end_time = datetime.combine(end_date, time())
 
     def parse(self, response):
-        articles = response.xpath(
-            '//div[@class="mb10 tw3_01_2" or @class="mb10 tw3_01_2 "]')
+        articles1 = response.xpath('//div[@class="mb10 tw3_01_2"]')
+        articles2 = response.xpath('//div[@class="mb10 tw3_01_2 "]')
+        articles = articles1 + articles2
         for article in articles:
             date_time_str = article.xpath(
                 './/span[@class="tw3_01_2_t"]/b/text()').get()

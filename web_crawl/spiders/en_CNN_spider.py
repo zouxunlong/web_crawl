@@ -7,7 +7,7 @@ from scrapy.utils.log import configure_logging
 from twisted.internet import reactor
 
 
-class CNNSpider(scrapy.Spider):
+class en_CNNSpider_spider(scrapy.Spider):
     name = 'en_CNN'
     allowed_domains = ['cnn.com']
     start_urls = []
@@ -61,23 +61,6 @@ class CNNSpider(scrapy.Spider):
 
     def warn_on_generator_with_return_value_stub(spider, callable):
         pass
-
     scrapy.utils.misc.warn_on_generator_with_return_value = warn_on_generator_with_return_value_stub
     scrapy.core.scraper.warn_on_generator_with_return_value = warn_on_generator_with_return_value_stub
 
-
-def main_runner(start_date):
-    settings = get_project_settings()
-    configure_logging(settings)
-    runner = CrawlerRunner(settings)
-    d = runner.crawl(CNNSpider,
-                     start_date=start_date,
-                     end_date=date.today())
-    d.addBoth(lambda _: reactor.stop())
-    reactor.run()
-
-
-if __name__ == "__main__":
-    start_date=date.today() - timedelta(3650)
-    main_runner(start_date)
-    print("finished all", flush=True)
