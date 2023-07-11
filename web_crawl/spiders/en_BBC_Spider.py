@@ -1,9 +1,5 @@
-from datetime import date, time, datetime, timedelta
+from datetime import time, datetime
 import scrapy
-from scrapy.crawler import CrawlerRunner
-from scrapy.utils.log import configure_logging
-from twisted.internet import reactor
-from scrapy.utils.project import get_project_settings
 import json
 
 
@@ -57,6 +53,7 @@ class en_BBC_Spider(scrapy.Spider):
                             text += text_obj["children"][0]["text"] + '\n'
                     if text:
                         yield {"date": date,
+                               "source": self.name,
                                "title": title,
                                "text": text}
 
@@ -73,6 +70,7 @@ class en_BBC_Spider(scrapy.Spider):
 
         if text:
             yield {"date": date,
+                   "source": self.name,
                    "title": title,
                    "text": text}
 

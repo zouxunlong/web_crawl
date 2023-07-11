@@ -1,9 +1,5 @@
-from datetime import date, time, datetime, timedelta
+from datetime import time, datetime 
 import scrapy
-from scrapy.crawler import CrawlerRunner
-from scrapy.utils.log import configure_logging
-from twisted.internet import reactor
-from scrapy.utils.project import get_project_settings
 
 
 class en_Bernama_Spider(scrapy.Spider):
@@ -60,16 +56,15 @@ class en_Bernama_Spider(scrapy.Spider):
         title = kwargs["title"]
         texts = response.xpath(
             '//div[@class="col-12 mt-3 text-dark text-justify"]/p/text()').getall()
-        texts=[text.replace(u'\xa0', " ") for text in texts]
+        texts = [text.replace(u'\xa0', " ") for text in texts]
         text = "\n".join(texts)
         if text:
             yield {"date": date,
+                   "source": self.name,
                    "title": title,
                    "text": text}
-
 
     def warn_on_generator_with_return_value_stub(spider, callable):
         pass
     scrapy.utils.misc.warn_on_generator_with_return_value = warn_on_generator_with_return_value_stub
     scrapy.core.scraper.warn_on_generator_with_return_value = warn_on_generator_with_return_value_stub
-

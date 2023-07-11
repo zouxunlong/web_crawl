@@ -51,6 +51,7 @@ class ta_BBC_Spider(scrapy.Spider):
                             text += text_obj["children"][0]["text"] + '\n'
                     if text:
                         yield {"date": date,
+                               "source": self.name,
                                "title": title,
                                "text": text}
 
@@ -68,6 +69,7 @@ class ta_BBC_Spider(scrapy.Spider):
 
         if text:
             yield {"date": date,
+                   "source": self.name,
                    "title": title,
                    "text": text}
 

@@ -38,6 +38,7 @@ class zh_ABC_Spider(scrapy.Spider):
 
         if text:
             yield {"date": date,
+                   "source": self.name,
                    "title": title,
                    "text": text}
 

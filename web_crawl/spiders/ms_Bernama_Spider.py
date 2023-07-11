@@ -61,6 +61,7 @@ class ms_Bernama_Spider(scrapy.Spider):
         text = "\n".join(texts)
         if text:
             yield {"date": date,
+                   "source": self.name,
                    "title": title,
                    "text": text}
 
