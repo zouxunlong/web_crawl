@@ -38,7 +38,7 @@ class ta_BBC_Spider(scrapy.Spider):
                 date = str(date_time.date())
 
                 if "url" in article:
-                    yield scrapy.Request(url='https://bbc.com' + article["url"],
+                    yield scrapy.Request(url='https://www.bbc.com' + article["url"],
                                          callback=self.parse_article,
                                          cb_kwargs={"date": date, "title": title})
                 else:

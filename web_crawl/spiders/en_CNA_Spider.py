@@ -33,15 +33,15 @@ class en_CNA_Spider(scrapy.Spider):
             date_time = datetime.strptime(
                 item["release_date"], "%Y-%m-%dT%H:%M:%S%z").replace(tzinfo=None)
 
-            # if date_time < self.start_time:
-            #     return
-            # elif date_time < self.end_time:
-            date = str(date_time.date())
-            title = item["title"]
+            if date_time < self.start_time:
+                return
+            elif date_time < self.end_time:
+                date = str(date_time.date())
+                title = item["title"]
 
-            yield scrapy.Request(url=item["absolute_url"],
-                                    callback=self.parse_article,
-                                    cb_kwargs={"date": date, "title": title})
+                yield scrapy.Request(url=item["absolute_url"],
+                                        callback=self.parse_article,
+                                        cb_kwargs={"date": date, "title": title})
 
     def parse_article(self, response, *args, **kwargs):
         date = kwargs["date"]
