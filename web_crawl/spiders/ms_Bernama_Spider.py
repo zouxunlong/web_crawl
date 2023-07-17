@@ -5,6 +5,8 @@ import scrapy
 class ms_Bernama_Spider(scrapy.Spider):
     name = 'ms_Bernama'
     allowed_domains = ['bernama.com']
+    custom_settings = {"DOWNLOAD_TIMEOUT": 60}
+
     start_urls = [
         'https://bernama.com/bm/arkib.php?am',
         'https://bernama.com/bm/arkib.php?ek',

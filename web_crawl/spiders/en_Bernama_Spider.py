@@ -5,6 +5,8 @@ import scrapy
 class en_Bernama_Spider(scrapy.Spider):
     name = 'en_Bernama'
     allowed_domains = ['bernama.com']
+    custom_settings = {"DOWNLOAD_TIMEOUT": 60}
+
     start_urls = [
         'https://bernama.com/en/archive.php?ge',
         'https://bernama.com/en/archive.php?bu',

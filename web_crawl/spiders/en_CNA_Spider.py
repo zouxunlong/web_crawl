@@ -10,13 +10,13 @@ class en_CNA_Spider(scrapy.Spider):
     custom_settings = {"DOWNLOAD_DELAY": 0.5}
 
     start_urls_0 = ["https://www.channelnewsasia.com/api/v1/infinitelisting/94f7cd75-c28b-4c0a-8d21-09c6ba3dd3fc?_format=json&viewMode=infinite_scroll_listing&page=%d" %
-                    n for n in range(1, 1685)]
+                    n for n in range(1, 1000)]
     start_urls_1 = ["https://www.channelnewsasia.com/api/v1/infinitelisting/18e56af5-db43-434c-b76b-8c7a766235ef?_format=json&viewMode=infinite_scroll_listing&page=%d" %
-                    n for n in range(1, 89)]
+                    n for n in range(1, 75)]
     start_urls_2 = ["https://www.channelnewsasia.com/api/v1/infinitelisting/f8f0f8b1-004c-486f-ac72-0c927b7b539d?_format=json&viewMode=infinite_scroll_listing&page=%d" %
-                    n for n in range(1, 385)]
+                    n for n in range(1, 300)]
     start_urls_3 = ["https://www.channelnewsasia.com/api/v1/infinitelisting/1da7e932-70b3-4a2e-891f-88f7dd72c9d6?_format=json&viewMode=infinite_scroll_listing&page=%d" %
-                    n for n in range(1, 956)]
+                    n for n in range(1, 800)]
     start_urls = start_urls_0+start_urls_1+start_urls_2+start_urls_3
 
     def __init__(self, start_date, end_date):
