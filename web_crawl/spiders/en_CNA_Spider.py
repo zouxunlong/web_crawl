@@ -7,7 +7,7 @@ class en_CNA_Spider(scrapy.Spider):
 
     name = "en_CNA"
     allowed_domains = ["www.channelnewsasia.com"]
-    custom_settings = {"DOWNLOAD_DELAY": 0.5}
+    custom_settings = {"DOWNLOAD_DELAY": 1}
 
     start_urls_0 = ["https://www.channelnewsasia.com/api/v1/infinitelisting/94f7cd75-c28b-4c0a-8d21-09c6ba3dd3fc?_format=json&viewMode=infinite_scroll_listing&page=%d" %
                     n for n in range(1, 1000)]
