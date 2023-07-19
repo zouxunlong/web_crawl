@@ -5,11 +5,15 @@
 
 
 # useful for handling different item types with a single interface
+import html
+import itertools
 from itemadapter import ItemAdapter
 import re
 from simhash import Simhash
 from elasticsearch import Elasticsearch
 from scrapy.exceptions import DropItem
+from sentsplit.segment import SentSplit
+from thai_segmenter import sentence_segment
 
 
 class ElasticSearchPipeline:
@@ -29,6 +33,11 @@ class ElasticSearchPipeline:
 
     def __init__(self, ES_CONNECTION_STRING):
         self.ES_CONNECTION_STRING = ES_CONNECTION_STRING
+        self.sentence_splitter_en = SentSplit(
+            'en', strip_spaces=True, maxcut=512)
+        self.sentence_splitter_zh = SentSplit(
+            'zh', strip_spaces=True, maxcut=150)
+        self.sentence_splitter_th = sentence_segment
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -76,6 +85,8 @@ class ElasticSearchPipeline:
         if res.meta.status not in [200, 201]:
             print(res, flush=True)
 
+        item['split_sentences']=self.sentence_split(item['language_type'], item['text'])
+
         return item
 
     def unwanted_character_filtered(self, text_for_filter):
@@ -111,3 +122,18 @@ class ElasticSearchPipeline:
         if re.search(self.pattern_thai, text):
             return True
         return False
+
+    def sentence_split(self, language_type, text):
+        text = html.unescape(text.strip().replace('「', '“').replace('」', '”'))
+
+        texts = [' '.join(text.split())
+                 for text in text.split('\n') if text.strip()]
+
+        if language_type in {'en', 'vi', 'ta', 'id', 'ms'}:
+            return list(itertools.chain.from_iterable(self.sentence_splitter_en.segment(texts)))
+        if language_type in {'zh'}:
+            return list(itertools.chain.from_iterable(self.sentence_splitter_zh.segment(texts)))
+        if language_type in {'th'}:
+            sentences_list = [[str(sentence) for sentence in self.sentence_splitter_th.segment(
+                text.strip())] for text in texts]
+            return list(itertools.chain.from_iterable(sentences_list))
