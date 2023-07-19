@@ -11,6 +11,7 @@ from simhash import Simhash
 from elasticsearch import Elasticsearch
 from scrapy.exceptions import DropItem
 
+
 class ElasticSearchPipeline:
 
     pattern_punctuation = r"""[!?,.:;"#$£€%&'()+-/<≤=≠≥>@[\]^_{|}，。、—‘’“”：；【】￥…《》？！（）]"""
@@ -36,14 +37,15 @@ class ElasticSearchPipeline:
         )
 
     def open_spider(self, spider):
-        self.client = Elasticsearch(self.ES_CONNECTION_STRING).options(ignore_status=400)
+        self.client = Elasticsearch(
+            self.ES_CONNECTION_STRING).options(ignore_status=400)
 
     def close_spider(self, spider):
         self.client.close()
 
     def process_item(self, item, spider):
 
-        language_type=spider.name[:2]
+        language_type = spider.name[:2]
 
         item['text'] = self.unwanted_character_filtered(item['text'])
         item['language_type'] = language_type
@@ -62,48 +64,50 @@ class ElasticSearchPipeline:
         index = 'news_articles_'+language_type
         id = Simhash(item['text'], f=64, reg=r'[\S]').value
 
-        res = self.client.index(index=index, id=id, document=item)
+        doc = {
+            'language_type': item['language_type'],
+            'source': item['source'],
+            'title': item['title'],
+            'text': item['text'],
+            'date': item['date'],
+        }
+
+        res = self.client.index(index=index, id=id, document=doc)
         if res.meta.status not in [200, 201]:
             print(res, flush=True)
 
         return item
 
-
     def unwanted_character_filtered(self, text_for_filter):
         text = re.sub(r'[^a-zA-Z0-9\s\t{}{}{}{}{}{}{}{}{}{}]'.format(self.pattern_punctuation[1:-1],
-                                                                    self.pattern_arabic[1:-1],
-                                                                    self.pattern_chinese[1:-1],
-                                                                    self.pattern_tamil[1:-1],
-                                                                    self.pattern_thai[1:-1],
-                                                                    self.pattern_russian[1:-1],
-                                                                    self.pattern_korean[1:-1],
-                                                                    self.pattern_japanese[1:-1],
-                                                                    self.pattern_vietnamese[1:-1],
-                                                                    self.pattern_emoji[1:-1],
-                                                                    ), '', text_for_filter)
+                                                                     self.pattern_arabic[1:-1],
+                                                                     self.pattern_chinese[1:-1],
+                                                                     self.pattern_tamil[1:-1],
+                                                                     self.pattern_thai[1:-1],
+                                                                     self.pattern_russian[1:-1],
+                                                                     self.pattern_korean[1:-1],
+                                                                     self.pattern_japanese[1:-1],
+                                                                     self.pattern_vietnamese[1:-1],
+                                                                     self.pattern_emoji[1:-1],
+                                                                     ), '', text_for_filter)
         return text
-
 
     def tamil_detected(self, text):
         if re.search(self.pattern_tamil, text):
             return True
         return False
 
-
     def vietnamese_detected(self, text):
         if re.search(self.pattern_vietnamese, text):
             return True
         return False
-
 
     def chinese_detected(self, text):
         if re.search(self.pattern_chinese, text):
             return True
         return False
 
-
     def thai_detected(self, text):
         if re.search(self.pattern_thai, text):
             return True
         return False
-
