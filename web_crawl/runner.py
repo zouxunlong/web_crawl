@@ -1,10 +1,10 @@
-from datetime import date, timedelta
+import time
+from datetime import date, timedelta, datetime
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
-import plac
 
 
-def main_process(start_date=date.today() - timedelta(3)):
+def main_process(start_date=date.today() - timedelta(1)):
     settings = get_project_settings()
     process = CrawlerProcess(settings)
     process.crawl("en_BBC", start_date=start_date, end_date=date.today())
@@ -42,6 +42,14 @@ def main_process(start_date=date.today() - timedelta(3)):
     process.start()
 
 
-if __name__ == "__main__":
-    plac.call(main_process)
+def main():
+    while True:
+        if datetime.now().hour in [0] and datetime.now().minute in range(10):
+            print("-------------------start schedule on {}".format(str(datetime.now())), flush=True)
+            main_process()
+            print("-------------------finished schedule on {}".format(str(datetime.now())), flush=True)
+        time.sleep(300)
+
+if __name__ == '__main__':
+    main()
     print("finished all", flush=True)
