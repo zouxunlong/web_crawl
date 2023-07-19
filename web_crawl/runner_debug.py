@@ -4,7 +4,7 @@ from scrapy.utils.log import configure_logging
 from twisted.internet import reactor
 from scrapy.utils.project import get_project_settings
 
-def main_runner(spider_name="zh_BBC"):
+def main_runner(spider_name="zh_CCTV"):
     settings = get_project_settings()
     configure_logging(settings)
     runner = CrawlerRunner(settings)

@@ -4,7 +4,7 @@ from scrapy.utils.project import get_project_settings
 import plac
 
 
-def main_process(start_date=date.today() - timedelta(1)):
+def main_process(start_date=date.today() - timedelta(3)):
     settings = get_project_settings()
     process = CrawlerProcess(settings)
     process.crawl("en_BBC", start_date=start_date, end_date=date.today())

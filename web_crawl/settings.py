@@ -13,7 +13,7 @@ SPIDER_MODULES = ['web_crawl.spiders']
 NEWSPIDER_MODULE = 'web_crawl.spiders'
 
 FEEDS = {
-    "./data1/%(name)s_%(start_date)s_%(end_date)s.jsonl": {
+    "./data/%(name)s/%(start_date)s_%(end_date)s.jsonl": {
         "format": "jsonlines",
         "overwrite": True,
     }
@@ -22,12 +22,15 @@ DOWNLOADER_MIDDLEWARES = {
     "web_crawl.middlewares.WebCrawlDownloaderMiddleware": 543,
     "scrapy.downloadermiddlewares.useragent.UserAgentMiddleware": None,
 }
+ITEM_PIPELINES = {
+    "web_crawl.pipelines.ElasticSearchPipeline": 300,
+}
 LOG_LEVEL = "INFO"
 RETRY_ENABLED = True
 DOWNLOAD_TIMEOUT = 15
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 FEED_EXPORT_ENCODING = "utf-8"
-
+ES_CONNECTION_STRING="http://localhost:9200"
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent

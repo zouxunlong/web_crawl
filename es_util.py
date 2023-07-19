@@ -121,37 +121,55 @@ def put_news_article(input_path="/home/xuancong/web_crawl/data"):
                             yield doc
 
 
-response = bulk(client=es, actions=put_news_article())
+def put_news_article1(input_path="/home/xuancong/web_crawl/data1"):
+    for rootdir, dirs, files in os.walk(input_path):
+        
+        files.sort(reverse=True)
+
+        for file in files:
+            language_type = file[:2]
+            if language_type in ['en', 'zh', 'vi', 'th', 'ta', 'ms', 'id']:
+                index = 'news_articles_'+language_type
+            source = file[:-28]
+            if file.endswith('.jsonl'):
+                input_file = os.path.join(rootdir, file)
+                with open(input_file, encoding='utf8') as file_in:
+                    for line in file_in:
+                        item = json.loads(line)
+
+                        if unwanted_character_detected(item['text']):
+                            item['text'] = unwanted_character_filtered(item['text'])
+
+                        if 'ta' in [language_type] and not tamil_detected(item['text']):
+                            continue
+                        if 'vi' in [language_type] and not vietnamese_detected(item['text']):
+                            continue
+                        if 'zh' in [language_type] and not chinese_detected(item['text']):
+                            continue
+                        if not item['text'].strip():
+                            continue
+
+                        doc = {
+                            '_index': index,
+                            '_id': Simhash(item['text'], f=64, reg=r'[\S]').value,
+                            'language_type': language_type,
+                            'source': item['source'],
+                            'title': item['title'],
+                            'text': item['text'],
+                            'date': item['date'],
+                        }
+
+                        yield doc
+
+
+response = bulk(client=es, actions=put_news_article1())
 print(response, flush=True)
 
-
-# def generate_actions():
-#     for item in db_worksheet['vi-en.train'].find().sort('_id', 1):
-#         yield item
-
-# response=bulk(client=es, index="worksheet_vi-en.train", actions=generate_actions())
 
 # doc = {
 #     'author': 'author_name',
 #     'text': 'Interesting content...',
-#     'timestamp': datetime.now(),
 # }
-# res = es.index(index="python_es01", id=1, document=doc)
-# print(res['result'])
-
-
-# res = es.get(index="python_es01", id=1)
-# print(res['_source'])
-
-
-# res =es.indices.create(index='python_es02')
-# print(res)
-
-
-# resp = es.search(index="bt_data", query={"match_all": {}}, track_total_hits=True, size=100, sort=  {"LaBSE": {"order": "asc"}}, search_after=[-0.0396])
-# print("Got %d Hits:" % resp['hits']['total']['value'])
-# for hit in resp['hits']['hits']:
-#     print("(text)s".format(hit["_source"]))
-
-
-# print(response, flush=True)
+# res = es.index(index="python_es01", id="1", document=doc)
+# if res.meta.status!=200:
+#     print(res)
