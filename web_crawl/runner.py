@@ -44,10 +44,10 @@ def main_process(start_date=date.today() - timedelta(1)):
 
 def main():
     while True:
-        if datetime.now().hour in [0] and datetime.now().minute in range(10):
-            print("-------------------start schedule on {}".format(str(datetime.now())), flush=True)
+        if datetime.now().hour in [0] and datetime.now().minute in range(5):
+            print("-------------------start {} on {}".format(str(date.today()), str(datetime.now())), flush=True)
             main_process()
-            print("-------------------finished schedule on {}".format(str(datetime.now())), flush=True)
+            print("-------------------finished {} on {}".format(str(date.today()), str(datetime.now())), flush=True)
         time.sleep(300)
 
 if __name__ == '__main__':

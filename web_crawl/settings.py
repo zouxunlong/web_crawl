@@ -6,6 +6,8 @@
 #     https://docs.scrapy.org/en/latest/topics/settings.html
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+from datetime import date
+current_date=date.today()
 
 BOT_NAME = 'web_crawl'
 
@@ -25,6 +27,8 @@ DOWNLOADER_MIDDLEWARES = {
 ITEM_PIPELINES = {
     "web_crawl.pipelines.ElasticSearchPipeline": 300,
 }
+
+LOG_FILE = f"{str(current_date)}.log"
 LOG_LEVEL = "INFO"
 RETRY_ENABLED = True
 DOWNLOAD_TIMEOUT = 15
