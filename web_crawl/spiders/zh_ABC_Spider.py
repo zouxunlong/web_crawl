@@ -32,10 +32,9 @@ class zh_ABC_Spider(scrapy.Spider):
     def parse_article(self, response, *args, **kwargs):
         date = kwargs["date"]
         title = response.xpath('//h1[@data-component="Heading"]/text()').get()
-        texts = response.xpath(
-            '//div[@id="body"]/div/div/div/p/text()').getall()
-        text = "\n".join(texts)
-
+        text_nodes = response.xpath('//div[@id="body"]/div/div/div/p')
+        texts=[''.join(text_node.xpath(".//text()").getall()).replace('\n', " ") for text_node in text_nodes if not text_node.xpath('.//script')]
+        text = "\n".join([t.strip() for t in texts if t.strip()]).replace(u'\xa0', " ").replace(u'\u3000', " ")
         if text:
             yield {"date": date,
                    "source": self.name,

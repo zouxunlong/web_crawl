@@ -35,8 +35,8 @@ class en_France24News_Spider(scrapy.Spider):
 
         title = response.xpath('//h1[@class="t-content__title a-page-title"]/text()').get()
         text_nodes = response.xpath('//*[@class="t-content__body u-clearfix"]/*[self::p or self::h2]')
-        texts = [''.join(text_node.xpath(".//text()").getall()).replace(u'\xa0', " ") for text_node in text_nodes]
-        text = "\n".join(texts[:])
+        texts=[''.join(text_node.xpath(".//text()").getall()).replace('\n', " ") for text_node in text_nodes if not text_node.xpath('.//script')]
+        text = "\n".join([t.strip() for t in texts if t.strip()]).replace(u'\xa0', " ").replace(u'\u3000', " ")
         if text:
             yield {"date": date,
                    "source": self.name,

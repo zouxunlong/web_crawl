@@ -78,10 +78,10 @@ class en_ChinaDaily_Spider(scrapy.Spider):
             if date_time < self.start_time:
                 return
             elif date_time < self.end_time:
+                url='https:' + article.xpath("(.//@href)").get()
                 date = str(date_time.date())
-                title = article.xpath(
-                    './span[@class="tw3_01_2_t"]/h4//text()').get()
-                yield response.follow(url='https:' + article.xpath("(.//@href)").get(),
+                title = article.xpath('./span[@class="tw3_01_2_t"]/h4//text()').get()
+                yield response.follow(url=url,
                                       callback=self.parse_article,
                                       cb_kwargs={"date": date, "title": title})
 
@@ -92,8 +92,9 @@ class en_ChinaDaily_Spider(scrapy.Spider):
     def parse_article(self, response, *args, **kwargs):
         date = kwargs["date"]
         title = kwargs["title"]
-        texts = response.xpath('//div[@id="Content"]/p//text()').getall()
-        text = "\n".join(texts[:])
+        text_nodes = response.xpath('//div[@id="Content"]/p')
+        texts=[''.join(text_node.xpath(".//text()").getall()).replace('\n', " ") for text_node in text_nodes if not text_node.xpath('.//script')]
+        text = "\n".join([t.strip() for t in texts if t.strip()]).replace(u'\xa0', " ").replace(u'\u3000', " ")
         if text:
             yield {"date": date,
                    "source": self.name,

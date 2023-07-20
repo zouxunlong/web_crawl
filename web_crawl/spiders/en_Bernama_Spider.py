@@ -56,10 +56,10 @@ class en_Bernama_Spider(scrapy.Spider):
 
         date = kwargs["date"]
         title = kwargs["title"]
-        texts = response.xpath(
-            '//div[@class="col-12 mt-3 text-dark text-justify"]/p/text()').getall()
-        texts = [text.replace(u'\xa0', " ") for text in texts]
-        text = "\n".join(texts)
+        text_nodes = response.xpath('//div[@class="col-12 mt-3 text-dark text-justify"]/p')
+        texts=[''.join(text_node.xpath(".//text()").getall()).replace('\n', " ") for text_node in text_nodes if not text_node.xpath('.//script')]
+        text = "\n".join([t.strip() for t in texts if t.strip()]).replace(u'\xa0', " ").replace(u'\u3000', " ")
+
         if text:
             yield {"date": date,
                    "source": self.name,

@@ -63,8 +63,9 @@ class zh_ChinaDaily_Spider(scrapy.Spider):
         date = kwargs["date"]
         title = kwargs["title"]
 
-        texts = response.xpath('//div[@id="Content"]/p//text()').getall()
-        text = "\n".join(texts[:])
+        text_nodes = response.xpath('//div[@id="Content"]/p')
+        texts=[''.join(text_node.xpath(".//text()").getall()).replace('\n', " ") for text_node in text_nodes if not text_node.xpath('.//script')]
+        text = "\n".join([t.strip() for t in texts if t.strip()]).replace(u'\xa0', " ").replace(u'\u3000', " ")
         if text:
             yield {"date": date,
                    "source": self.name,

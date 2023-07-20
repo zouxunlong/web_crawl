@@ -2,11 +2,11 @@ import scrapy
 from datetime import time, datetime
 
 
+class en_Theindependent_Spider(scrapy.Spider):
 
-class vi_NguoiViet_Spider(scrapy.Spider):
-    name = 'vi_nguoiviet'
-    allowed_domains = ['nguoi-viet.com']
-    start_urls = ['https://www.nguoi-viet.com/?s=+']
+    name = 'en_Theindependent'
+    allowed_domains = ['theindependent.co']
+    start_urls = ['https://theindependent.co/?s']
 
     def __init__(self, start_date, end_date):
         self.start_date = start_date
@@ -15,30 +15,32 @@ class vi_NguoiViet_Spider(scrapy.Spider):
         self.end_time = datetime.combine(end_date, time())
 
     def parse(self, response):
-        articles = response.xpath(
-            '//div[@class="td-ss-main-content"]//div[@class="item-details"]')
+        articles = response.xpath('//div[@class="item-details"]')
         for article in articles:
+
             date_time_str = article.xpath('.//@datetime').get()
-            date_time = datetime.strptime(date_time_str[:10], "%Y-%m-%d")
+            date_time = datetime.strptime(date_time_str[:-6], "%Y-%m-%dT%H:%M:%S")
 
             if date_time < self.start_time:
                 return
             elif date_time < self.end_time:
                 date = str(date_time.date())
-                title = article.xpath('.//@title').get()
-                yield scrapy.Request(url=article.xpath('.//@href').get(),
+                url = article.xpath('.//@href').get()
+                title = article.xpath('./h3//text()').get()
+                yield scrapy.Request(url=url,
                                      callback=self.parse_article,
                                      cb_kwargs={"date": date, "title": title})
 
-        next_page_link = response.xpath(
-            '//a[@aria-label="next-page"]/@href').get()
+        next_page_link = response.xpath('//div[@class="page-nav td-pb-padding-side"]/a[last()]/@href').get()
         if next_page_link:
             yield scrapy.Request(next_page_link, callback=self.parse)
 
+
     def parse_article(self, response, *args, **kwargs):
+
         date = kwargs["date"]
         title = kwargs["title"]
-        text_nodes = response.xpath('//div[@class="tdb-block-inner td-fix-index"]/p')
+        text_nodes = response.xpath('//div[@class="tdb-block-inner td-fix-index"]/p[position()<last()]')
         texts=[''.join(text_node.xpath(".//text()").getall()).replace('\n', " ") for text_node in text_nodes if not text_node.xpath('.//script')]
         text = "\n".join([t.strip() for t in texts if t.strip()]).replace(u'\xa0', " ").replace(u'\u3000', " ")
         if text:

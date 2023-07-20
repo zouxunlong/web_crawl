@@ -117,10 +117,15 @@ def process_news_article(input_path):
                 if file.endswith('.jsonl'):
                     input_file = os.path.join(rootdir, file)
                     output_file = os.path.join(rootdir, file.replace('jsonl', 'jl'))
+                    print("started {}".format(input_file), flush=True)
                     with open(input_file, encoding='utf8') as file_in, \
                         open(output_file, 'w', encoding='utf8') as file_out:
                         for line in file_in:
                             item = json.loads(line)
+
+                            if 'split_sentences' in item.keys():
+                                print("jumped {}".format(input_file), flush=True)
+                                break
 
                             item['text'] = unwanted_character_filtered(item['text'])
 
@@ -143,7 +148,7 @@ def process_news_article(input_path):
 
 
                             file_out.write(json.dumps(item, ensure_ascii=False)+'\n')
-
+                    print("finished {}".format(input_file), flush=True)
 
 if __name__=="__main__":
     process_news_article("/home/xuancong/web_crawl/data")

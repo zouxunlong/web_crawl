@@ -25,7 +25,7 @@ class en_TechCrunch_Spider(scrapy.Spider):
 
             if date_time < self.start_time:
                 return
-            elif date_time > self.end_time:
+            elif date_time < self.end_time:
 
                 date = str(date_time.date())
                 url = item["link"]
@@ -44,8 +44,8 @@ class en_TechCrunch_Spider(scrapy.Spider):
         date = kwargs["date"]
         title = kwargs["title"]
         text_nodes = response.xpath('//div[@class="article-content"]/p')
-        texts=[''.join(text_node.xpath(".//text()").getall()).replace(u'\xa0', " ").replace(u'\u3000', " ") for text_node in text_nodes if not text_node.xpath('.//img')]
-        text = "\n".join(texts[:])
+        texts=[''.join(text_node.xpath(".//text()").getall()).replace('\n', " ") for text_node in text_nodes if not text_node.xpath('.//script')]
+        text = "\n".join([t.strip() for t in texts if t.strip()]).replace(u'\xa0', " ").replace(u'\u3000', " ")
         if text:
             yield {"date": date,
                    "source": self.name,
