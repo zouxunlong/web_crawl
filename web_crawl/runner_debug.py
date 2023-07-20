@@ -8,11 +8,11 @@ def main_runner(spider_name):
     settings = get_project_settings()
     configure_logging(settings)
     runner = CrawlerRunner(settings)
-    d = runner.crawl(spider_name, start_date=date.today() - timedelta(3560), end_date=date.today())
+    d = runner.crawl(spider_name, start_date=date.today() - timedelta(1), end_date=date.today())
     d.addBoth(lambda _: reactor.stop())
     reactor.run()
 
 
 if __name__ == "__main__":
-    main_runner("zh_Sina")
+    main_runner("en_techcrunch")
     print("finished all", flush=True)

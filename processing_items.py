@@ -131,7 +131,7 @@ def process_news_article(input_path):
 
                             if not item['text'].strip():
                                 continue
-                            if not item['title'].strip():
+                            if not item['title'] or not item['title'].strip():
                                 continue
                             if 'ta' in [language_type] and not tamil_detected(item['text']):
                                 continue

@@ -1,10 +1,9 @@
-import json
 import scrapy
 from datetime import time, datetime
 
 
 class en_MoscowTimes_Spider(scrapy.Spider):
-    name = 'en_TheMoscowTimes'
+    name = 'en_MoscowTimes'
     allowed_domains = ['themoscowtimes.com']
     start_urls = ['https://themoscowtimes.com/news/0']
 

@@ -1,10 +1,5 @@
 import scrapy
-from datetime import date, time, datetime, timezone, timedelta
-from scrapy.crawler import CrawlerProcess
-from pathlib import Path
-import plac
-import os
-import json
+from datetime import time, datetime
 
 
 class en_Mothership_Spider(scrapy.Spider):
