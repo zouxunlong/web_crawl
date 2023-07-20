@@ -124,6 +124,7 @@ class ElasticSearchPipeline:
         return False
 
     def sentence_split(self, language_type, text):
+
         text = html.unescape(text.strip().replace('「', '“').replace('」', '”'))
 
         texts = [' '.join(text.split())
