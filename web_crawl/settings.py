@@ -15,7 +15,7 @@ SPIDER_MODULES = ['web_crawl.spiders']
 NEWSPIDER_MODULE = 'web_crawl.spiders'
 
 FEEDS = {
-    "./data/%(name)s/%(start_date)s_%(end_date)s.jsonl": {
+    "./data/%(name)s/%(name)s.jsonl": {
         "format": "jsonlines",
         "overwrite": True,
     }

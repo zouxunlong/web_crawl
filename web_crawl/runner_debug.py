@@ -4,6 +4,7 @@ from scrapy.utils.log import configure_logging
 from twisted.internet import reactor
 from scrapy.utils.project import get_project_settings
 
+
 def main_runner(spider_name):
     settings = get_project_settings()
     configure_logging(settings)
@@ -14,5 +15,5 @@ def main_runner(spider_name):
 
 
 if __name__ == "__main__":
-    main_runner("en_Weekender")
+    main_runner("th_koratdaily")
     print("finished all", flush=True)

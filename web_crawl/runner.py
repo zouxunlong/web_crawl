@@ -49,14 +49,14 @@ def main_process(start_date):
     process.start()
 
 
-# def main():
-#     while True:
-#         if datetime.now().hour in [0] and datetime.now().minute in range(5):
-#             print("-------------------start {} on {}".format(str(date.today()), str(datetime.now())), flush=True)
-#             main_process(date.today() - timedelta(1))
-#             print("-------------------finished {} on {}".format(str(date.today()), str(datetime.now())), flush=True)
-#         time.sleep(300)
+def main():
+    while True:
+        if datetime.now().hour in [0] and datetime.now().minute in range(5):
+            print("-------------------start {} on {}".format(str(date.today()), str(datetime.now())), flush=True)
+            main_process(date.today() - timedelta(1))
+            print("-------------------finished {} on {}".format(str(date.today()), str(datetime.now())), flush=True)
+        time.sleep(300)
 
 if __name__ == '__main__':
-    main_process(date.today() - timedelta(1))
+    main()
     print("finished all", flush=True)
