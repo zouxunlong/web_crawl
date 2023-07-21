@@ -11,12 +11,24 @@ from datetime import datetime
 from scrapy.crawler import CrawlerProcess
 
 
-class th_newtv_Spider(scrapy.Spider):
+class th_prachachat_Spider(scrapy.Spider):
 
-    name = 'th_newtv'
-    allowed_domains = ['newtv.co.th']
-    start_urls = ['https://www.newtv.co.th/news/{}'.format(str(id)) for id in range(1, 121962)]
-    
+    name = 'th_prachachat'
+    allowed_domains = ['prachachat.net']
+    start_urls = ['http://www.prachachat.net/world-news/news-{}'.format(str(id)) for id in range(1, 980000)]
+    translation = {"มกราคม": 1,
+                   "กุมภาพันธ์": 2,
+                   "มีนาคม": 3,
+                   "เมษายน": 4,
+                   "พฤษภาคม": 5,
+                   "มิถุนายน": 6,
+                   "กรกฎาคม": 7,
+                   "สิงหาคม": 8,
+                   "กันยายน": 9,
+                   "ตุลาคม": 10,
+                   "พฤศจิกายน": 11,
+                   "ธันวาคม": 12,
+                   }
     pattern_punctuation = r"""[!?,.:;"#$£€%&'()+-/<≤=≠≥>@[\]^_{|}，。、—‘’“”：；【】￥…《》？！（）]"""
     pattern_url = r"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)"
     pattern_email = r"[\w\-\.]+@([\w\-]+\.)+[\w\-]{2,4}"
@@ -32,30 +44,45 @@ class th_newtv_Spider(scrapy.Spider):
 
     def __init__(self):
         self.ES_CONNECTION_STRING = "http://localhost:9200"
-        self.sentence_splitter_en = SentSplit('en', strip_spaces=True, maxcut=512)
-        self.sentence_splitter_zh = SentSplit('zh', strip_spaces=True, maxcut=150)
+        self.sentence_splitter_en = SentSplit(
+            'en', strip_spaces=True, maxcut=512)
+        self.sentence_splitter_zh = SentSplit(
+            'zh', strip_spaces=True, maxcut=150)
         self.sentence_splitter_th = sentence_segment
         self.client = Elasticsearch(
             self.ES_CONNECTION_STRING).options(ignore_status=400)
 
     def parse(self, response):
 
-        date_time_str = response.xpath('//meta[contains(@property, "published_time")]/@content').get()
-        date_time = datetime.strptime(date_time_str[:-5], "%Y-%m-%dT%H:%M:%S")
+        try:
+            date_time_str = response.xpath('//time/text()').get()
+            if not date_time_str:
+                print(e, response._url)
+                return
+        except Exception as e:
+            print(e, response._url)
+            return
+        day, month_thai, year_thai = date_time_str.split()[1:4]
+        month = self.translation[month_thai]
+        year = int(year_thai) - 543
+        date_time = datetime(year, month, int(day))
+
         date = str(date_time.date())
 
-        title = response.xpath('//div[@class="news"]//h1/text()').get()
+        title = response.xpath('//article//h1/text()').get()
 
-        text_nodes = response.xpath('//article[contains(@class, "article-news")]')
-        texts=[''.join(text_node.xpath(".//text()").getall()).replace('\n', " ") for text_node in text_nodes]
-        text = "\n".join([t.strip() for t in texts if t.strip()]).replace(u'\xa0', "").replace(u'\u3000', " ").replace(u'\u200b', '')
-        
+        text_nodes = response.xpath('//div[@itemprop="articleBody"]//p')
+
+        texts = [''.join(text_node.xpath(".//text()").getall()) for text_node in text_nodes]
+        text = "\n".join([t.strip() for t in texts if t.strip()]).replace(
+            u'\xa0', "").replace(u'\u3000', " ").replace(u'\u200b', '')
+
         if text and title:
 
             item = {"date": date,
-                   "source": self.name,
-                   "title": title.strip(),
-                   "text": text.strip()}
+                    "source": self.name,
+                    "title": title.strip(),
+                    "text": text.strip()}
 
             language_type = self.name[:2]
             item['text'] = self.unwanted_character_filtered(item['text'])
@@ -89,7 +116,8 @@ class th_newtv_Spider(scrapy.Spider):
             if res.meta.status not in [200, 201]:
                 print(res, flush=True)
 
-            item['split_sentences']=self.sentence_split(item['language_type'], item['text'])
+            item['split_sentences'] = self.sentence_split(
+                item['language_type'], item['text'])
 
             yield item
 
@@ -139,7 +167,8 @@ class th_newtv_Spider(scrapy.Spider):
         if language_type in {'zh'}:
             return list(itertools.chain.from_iterable(self.sentence_splitter_zh.segment(texts)))
         if language_type in {'th'}:
-            sentences_list = [[str(sentence) for sentence in self.sentence_splitter_th(text.strip())] for text in texts]
+            sentences_list = [[str(sentence) for sentence in self.sentence_splitter_th(
+                text.strip())] for text in texts]
             return list(itertools.chain.from_iterable(sentences_list))
 
     def closed(self, reason):
@@ -163,10 +192,10 @@ def main():
                 },
             },
             "LOG_LEVEL": "INFO",
-            "USER_AGENT": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.88 Safari/537.36",
+            "USER_AGENT": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.82",
         }
     )
-    process.crawl(th_newtv_Spider)
+    process.crawl(th_prachachat_Spider)
     process.start()
 
 
