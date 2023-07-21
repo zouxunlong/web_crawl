@@ -15,7 +15,7 @@ class en_Weekender_Spider(scrapy.Spider):
 
     def parse(self, response):
 
-        articles = response.xpath('//div[@class="rb-col-m12"]')
+        articles = response.xpath('//div[@class="rb-col-m12"]/div[not(contains(@class, "sticky"))]')
 
         for article in articles:
 
@@ -48,6 +48,7 @@ class en_Weekender_Spider(scrapy.Spider):
         text_nodes = response.xpath('//div[@class="theiaPostSlider_slides"]/div/*[self::p or self::h3 or self::h2]')
         texts=[''.join(text_node.xpath(".//text()").getall()).replace('\n', " ") for text_node in text_nodes if not text_node.xpath('.//script')]
         text = "\n".join([t.strip() for t in texts if t.strip()]).replace(u'\xa0', " ").replace(u'\u3000', " ")
+        
         if text and title:
             yield {"date": date,
                    "source": self.name,
