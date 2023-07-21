@@ -23,13 +23,16 @@ class en_Theindependent_Spider(scrapy.Spider):
 
             if date_time < self.start_time:
                 return
-            elif date_time < self.end_time:
-                date = str(date_time.date())
-                url = article.xpath('.//@href').get()
-                title = article.xpath('./h3//text()').get()
-                yield scrapy.Request(url=url,
-                                     callback=self.parse_article,
-                                     cb_kwargs={"date": date, "title": title})
+            elif date_time >= self.end_time:
+                continue
+
+            date = str(date_time.date())
+            url = article.xpath('.//@href').get()
+            title = article.xpath('./h3//text()').get()
+
+            yield scrapy.Request(url=url,
+                                    callback=self.parse_article,
+                                    cb_kwargs={"date": date, "title": title})
 
         next_page_link = response.xpath('//div[@class="page-nav td-pb-padding-side"]/a[last()]/@href').get()
         if next_page_link:

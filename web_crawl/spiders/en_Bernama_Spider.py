@@ -1,4 +1,4 @@
-from datetime import time, datetime 
+from datetime import time, datetime
 import scrapy
 
 
@@ -39,13 +39,16 @@ class en_Bernama_Spider(scrapy.Spider):
 
             if date_time < self.start_time:
                 return
-            elif date_time < self.end_time:
-                date = str(date_time.date())
-                title = article.xpath("./h6//text()").get()
-                yield scrapy.Request(url=article.xpath(".//h6/a/@href").get(),
-                                     callback=self.parse_article,
-                                     cb_kwargs={"date": date,
-                                                "title": title})
+            elif date_time >= self.end_time:
+                continue
+
+            date = str(date_time.date())
+            title = article.xpath("./h6//text()").get()
+            url = article.xpath(".//h6/a/@href").get()
+
+            yield scrapy.Request(url=url,
+                                 callback=self.parse_article,
+                                 cb_kwargs={"date": date, "title": title})
 
         next_page_link = response.xpath(
             '//i[@class="fa fa-chevron-right"]/parent::a/@href').get()
@@ -56,9 +59,13 @@ class en_Bernama_Spider(scrapy.Spider):
 
         date = kwargs["date"]
         title = kwargs["title"]
-        text_nodes = response.xpath('//div[@class="col-12 mt-3 text-dark text-justify"]/p')
-        texts=[''.join(text_node.xpath(".//text()").getall()).replace('\n', " ") for text_node in text_nodes if not text_node.xpath('.//script')]
-        text = "\n".join([t.strip() for t in texts if t.strip()]).replace(u'\xa0', " ").replace(u'\u3000', " ")
+
+        text_nodes = response.xpath(
+            '//div[@class="col-12 mt-3 text-dark text-justify"]/p')
+        texts = [''.join(text_node.xpath(".//text()").getall()).replace('\n', " ")
+                 for text_node in text_nodes if not text_node.xpath('.//script')]
+        text = "\n".join([t.strip() for t in texts if t.strip()]).replace(
+            u'\xa0', " ").replace(u'\u3000', " ")
 
         if text:
             yield {"date": date,

@@ -68,22 +68,28 @@ class en_ChinaDaily_Spider(scrapy.Spider):
         self.end_time = datetime.combine(end_date, time())
 
     def parse(self, response):
+
         articles1 = response.xpath('//div[@class="mb10 tw3_01_2"]')
         articles2 = response.xpath('//div[@class="mb10 tw3_01_2 "]')
         articles = articles1 + articles2
+        
         for article in articles:
-            date_time_str = article.xpath(
-                './/span[@class="tw3_01_2_t"]/b/text()').get()
+
+            date_time_str = article.xpath('.//span[@class="tw3_01_2_t"]/b/text()').get()
             date_time = datetime.strptime(date_time_str, "%Y-%m-%d %H:%M")
+
             if date_time < self.start_time:
                 return
-            elif date_time < self.end_time:
-                url='https:' + article.xpath("(.//@href)").get()
-                date = str(date_time.date())
-                title = article.xpath('./span[@class="tw3_01_2_t"]/h4//text()').get()
-                yield response.follow(url=url,
-                                      callback=self.parse_article,
-                                      cb_kwargs={"date": date, "title": title})
+            elif date_time >= self.end_time:
+                continue
+
+            url='https:' + article.xpath("(.//@href)").get()
+            date = str(date_time.date())
+            title = article.xpath('./span[@class="tw3_01_2_t"]/h4//text()').get()
+
+            yield response.follow(url=url,
+                                    callback=self.parse_article,
+                                    cb_kwargs={"date": date, "title": title})
 
         next_page_link = response.xpath('//a[text()="Next"]/@href').get()
         if next_page_link:

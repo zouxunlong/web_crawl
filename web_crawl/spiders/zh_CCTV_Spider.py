@@ -26,12 +26,14 @@ class zh_CCTV_Spider(scrapy.Spider):
 
             if date_time < self.start_time:
                 return
-            elif date_time < self.end_time:
-                date = str(date_time.date())
-                title = item["title"]
-                yield response.follow(url=item["url"],
-                                      callback=self.parse_article,
-                                      cb_kwargs={"date": date, "title": title})
+            elif date_time >= self.end_time:
+                continue
+
+            date = str(date_time.date())
+            title = item["title"]
+            yield response.follow(url=item["url"],
+                                    callback=self.parse_article,
+                                    cb_kwargs={"date": date, "title": title})
         if self.page == 8:
             return
         self.page += 1

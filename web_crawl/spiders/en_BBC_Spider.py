@@ -30,32 +30,34 @@ class en_BBC_Spider(scrapy.Spider):
 
             if date_time < self.start_time:
                 continue
-            elif date_time < self.end_time:
-                self.been_relevant = True
-                now_relevant = True
+            elif date_time >= self.end_time:
+                continue
 
-                title = article["title"]
-                date = str(date_time.date())
+            self.been_relevant = True
+            now_relevant = True
 
-                if "url" in article:
-                    yield scrapy.Request(url='https://bbc.com' + article["url"],
-                                         callback=self.parse_article,
-                                         cb_kwargs={"date": date,
-                                                    "title": title})
+            title = article["title"]
+            date = str(date_time.date())
 
-                else:
-                    text_children = article["body"]
-                    text = ""
-                    for text_obj in text_children:
-                        if text_obj["name"] != "paragraph":
-                            continue
-                        if "text" in text_obj["children"][0]:
-                            text += text_obj["children"][0]["text"] + '\n'
-                    if text:
-                        yield {"date": date,
-                               "source": self.name,
-                               "title": title,
-                               "text": text}
+            if "url" in article:
+                yield scrapy.Request(url='https://bbc.com' + article["url"],
+                                        callback=self.parse_article,
+                                        cb_kwargs={"date": date,
+                                                "title": title})
+
+            else:
+                text_children = article["body"]
+                text = ""
+                for text_obj in text_children:
+                    if text_obj["name"] != "paragraph":
+                        continue
+                    if "text" in text_obj["children"][0]:
+                        text += text_obj["children"][0]["text"] + '\n'
+                if text:
+                    yield {"date": date,
+                            "source": self.name,
+                            "title": title,
+                            "text": text}
 
         if not self.been_relevant or now_relevant:
             self.page += 1
@@ -63,8 +65,10 @@ class en_BBC_Spider(scrapy.Spider):
                                  callback=self.parse)
 
     def parse_article(self, response, *args, **kwargs):
+        
         date = kwargs["date"]
         title = kwargs["title"]
+        
         text_nodes = response.xpath('//div[@data-component="text-block"]')
         texts=[''.join(text_node.xpath(".//text()").getall()).replace('\n', " ") for text_node in text_nodes if not text_node.xpath('.//script')]
         text = "\n".join([t.strip() for t in texts if t.strip()]).replace(u'\xa0', " ").replace(u'\u3000', " ")

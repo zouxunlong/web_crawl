@@ -16,21 +16,26 @@ class en_MoscowTimes_Spider(scrapy.Spider):
         self.page = 0
 
     def parse(self, response):
+
         articles = response.xpath('//a')
+
         for article in articles:
+
             url = article.xpath("./@href").get()
             date_time_str = "-".join(url.split("/")[-4:-1])
             date_time = datetime.strptime(date_time_str, "%Y-%m-%d")
+
             if date_time < self.start_time:
                 return
-            elif date_time < self.end_time:
+            elif date_time >= self.end_time:
+                continue
 
-                date = str(date_time.date())
-                title = article.xpath("./@title").get()
+            date = str(date_time.date())
+            title = article.xpath("./@title").get()
 
-                yield scrapy.Request(url=url,
-                                     callback=self.parse_article,
-                                     cb_kwargs={"date": date, "title": title})
+            yield scrapy.Request(url=url,
+                                 callback=self.parse_article,
+                                 cb_kwargs={"date": date, "title": title})
 
         self.page += 1
         next_page_link = self.base_url + str(18 * self.page)
@@ -41,8 +46,10 @@ class en_MoscowTimes_Spider(scrapy.Spider):
         date = kwargs["date"]
         title = kwargs["title"]
         text_nodes = response.xpath('//div[@class="article__content"]/div/p')
-        texts=[''.join(text_node.xpath(".//text()").getall()).replace('\n', " ") for text_node in text_nodes if not text_node.xpath('.//script')]
-        text = "\n".join([t.strip() for t in texts if t.strip()]).replace(u'\xa0', " ").replace(u'\u3000', " ")
+        texts = [''.join(text_node.xpath(".//text()").getall()).replace('\n', " ")
+                 for text_node in text_nodes if not text_node.xpath('.//script')]
+        text = "\n".join([t.strip() for t in texts if t.strip()]).replace(
+            u'\xa0', " ").replace(u'\u3000', " ")
         if text:
             yield {"date": date,
                    "source": self.name,

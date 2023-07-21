@@ -26,13 +26,16 @@ class en_OneIndia_Spider(scrapy.Spider):
 
             if date_time < self.start_time:
                 return
-            elif date_time < self.end_time:
-                date = str(date_time.date())
-                title = article.xpath('.//div[@class="cityblock-title news-desc"]/a/text()').get()
-                url = article.xpath('.//div[@class="cityblock-title news-desc"]/a/@href').get()
-                yield response.follow(url=url,
-                                      callback=self.parse_article,
-                                      cb_kwargs={"date": date, "title": title})
+            elif date_time >= self.end_time:
+                continue
+
+            date = str(date_time.date())
+            title = article.xpath('.//div[@class="cityblock-title news-desc"]/a/text()').get()
+            url = article.xpath('.//div[@class="cityblock-title news-desc"]/a/@href').get()
+            
+            yield response.follow(url=url,
+                                    callback=self.parse_article,
+                                    cb_kwargs={"date": date, "title": title})
 
         next_page_link = response.xpath(
             '//a[@class="oi-city-next"]/@href').get()

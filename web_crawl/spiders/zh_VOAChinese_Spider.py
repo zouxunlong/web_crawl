@@ -16,31 +16,40 @@ class zh_VOAChinese_Spider(scrapy.Spider):
         self.base_url = 'https://www.voachinese.com/z/1740?p='
 
     def parse(self, response):
+
         articles = response.xpath('//ul[@id="ordinaryItems"]/li')
+
         for article in articles:
+
             date_time_str = article.xpath('.//span/text()').get()
             date_time = datetime.strptime(date_time_str, "%Y年%m月%d日")
 
             if date_time < self.start_time:
                 return
-            elif date_time < self.end_time:
-                date = str(date_time.date())
-                title = article.xpath('.//h4/@title').get()
-                url = article.xpath('.//@href').get()
-                yield response.follow(url=url,
-                                      callback=self.parse_article,
-                                      cb_kwargs={"date": date, "title": title})
+            elif date_time >= self.end_time:
+                continue
+
+            date = str(date_time.date())
+            title = article.xpath('.//h4/@title').get()
+            url = article.xpath('.//@href').get()
+
+            yield response.follow(url=url,
+                                    callback=self.parse_article,
+                                    cb_kwargs={"date": date, "title": title})
 
         next_page_link = self.base_url + str(self.page)
         yield scrapy.Request(next_page_link, callback=self.parse)
         self.page += 1
 
     def parse_article(self, response, *args, **kwargs):
+
         date = kwargs["date"]
         title = kwargs["title"]
+
         text_nodes = response.xpath('//div[@class="wsw"]/p')
         texts=[''.join(text_node.xpath(".//text()").getall()).replace('\n', " ") for text_node in text_nodes if not text_node.xpath('.//script')]
         text = "\n".join([t.strip() for t in texts if t.strip()]).replace(u'\xa0', " ").replace(u'\u3000', " ")
+        
         if text:
             yield {"date": date,
                    "source": self.name,

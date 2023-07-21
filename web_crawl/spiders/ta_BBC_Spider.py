@@ -30,30 +30,32 @@ class ta_BBC_Spider(scrapy.Spider):
 
             if date_time < self.start_time:
                 continue
-            elif date_time < self.end_time:
-                self.been_relevant = True
-                now_relevant = True
+            elif date_time >= self.end_time:
+                continue
 
-                title = article["title"]
-                date = str(date_time.date())
+            self.been_relevant = True
+            now_relevant = True
 
-                if "url" in article:
-                    yield scrapy.Request(url='https://www.bbc.com' + article["url"],
-                                         callback=self.parse_article,
-                                         cb_kwargs={"date": date, "title": title})
-                else:
-                    text_children = article["body"]
-                    text = ""
-                    for text_obj in text_children:
-                        if text_obj["name"] != "paragraph":
-                            continue
-                        if "text" in text_obj["children"][0]:
-                            text += text_obj["children"][0]["text"] + '\n'
-                    if text:
-                        yield {"date": date,
-                               "source": self.name,
-                               "title": title,
-                               "text": text}
+            title = article["title"]
+            date = str(date_time.date())
+
+            if "url" in article:
+                yield scrapy.Request(url='https://www.bbc.com' + article["url"],
+                                        callback=self.parse_article,
+                                        cb_kwargs={"date": date, "title": title})
+            else:
+                text_children = article["body"]
+                text = ""
+                for text_obj in text_children:
+                    if text_obj["name"] != "paragraph":
+                        continue
+                    if "text" in text_obj["children"][0]:
+                        text += text_obj["children"][0]["text"] + '\n'
+                if text:
+                    yield {"date": date,
+                            "source": self.name,
+                            "title": title,
+                            "text": text}
 
         if not self.been_relevant or now_relevant:
             self.page += 1

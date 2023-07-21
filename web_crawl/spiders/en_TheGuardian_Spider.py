@@ -27,15 +27,17 @@ class en_TheGuardian_Spider(scrapy.Spider):
 
             if date_time < self.start_time:
                 return
-            elif date_time < self.end_time:
-                date = str(date_time.date())
-                articles = day.xpath('.//h3[@class="fc-item__title"]')
-                for article in articles:
-                    url = article.xpath('./a/@href').get()
-                    title = ''.join(article.xpath('./a//text()').getall()).strip()
-                    yield scrapy.Request(url=url,
-                                         callback=self.parse_article,
-                                         cb_kwargs={"date": date, "title": title})
+            elif date_time >= self.end_time:
+                continue
+
+            date = str(date_time.date())
+            articles = day.xpath('.//h3[@class="fc-item__title"]')
+            for article in articles:
+                url = article.xpath('./a/@href').get()
+                title = ''.join(article.xpath('./a//text()').getall()).strip()
+                yield scrapy.Request(url=url,
+                                        callback=self.parse_article,
+                                        cb_kwargs={"date": date, "title": title})
         next_page_link = response.xpath('//link[@rel="next"]/@href').get()
         if next_page_link:
             yield scrapy.Request(response.urljoin(next_page_link), callback=self.parse)

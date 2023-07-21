@@ -3,16 +3,11 @@ from datetime import time, datetime
 import json
 
 class zh_Twreporter_Spider(scrapy.Spider):
+
     name = 'zh_Twreporter'
-    allowed_domains = ['www.twreporter.org']
-    start_urls = [
-        'https://go-api.twreporter.org/v2/posts?limit=10000&category_id=5951db87507c6a0d00ab063c',
-        'https://go-api.twreporter.org/v2/posts?limit=10000&category_id=5951db9b507c6a0d00ab063d',
-        'https://go-api.twreporter.org/v2/posts?limit=10000&category_id=5951dbc2507c6a0d00ab0640',
-        'https://go-api.twreporter.org/v2/posts?limit=10000&category_id=57175d923970a5e46ff854db',
-        'https://go-api.twreporter.org/v2/posts?limit=10000&category_id=59783ad89092de0d00b41691',
-        'https://go-api.twreporter.org/v2/posts?limit=10000&category_id=5743d35a940ee41000e81f4a',
-    ]
+
+    allowed_domains = ['twreporter.org']
+    start_urls = ['https://go-api.twreporter.org/v2/posts?limit=500&offset={}&sort=-published_date'.format(offset) for offset in range(0,4000,500)]
 
     def __init__(self, start_date, end_date):
         self.start_date = start_date
@@ -25,21 +20,23 @@ class zh_Twreporter_Spider(scrapy.Spider):
         json_resp = json.loads(response.body)
 
         for item in json_resp['data']['records']:
+
             date_time_str = item['published_date']
             date_time = datetime.strptime(date_time_str[:-1], "%Y-%m-%dT%H:%M:%S")
 
             if date_time < self.start_time:
                 return
-            elif date_time < self.end_time:
-                
-                url='https://www.twreporter.org/a/'+item["slug"]
-                date = str(date_time.date())
-                title = item['title']
+            elif date_time >= self.end_time:
+                continue
 
-                yield scrapy.Request(
-                    url=url,
-                    callback=self.parse_article,
-                    cb_kwargs={"date": date, "title": title})
+            url='https://www.twreporter.org/a/'+item["slug"]
+            date = str(date_time.date())
+            title = item['title']
+
+            yield scrapy.Request(
+                url=url,
+                callback=self.parse_article,
+                cb_kwargs={"date": date, "title": title})
 
 
     def parse_article(self, response, *args, **kwargs):

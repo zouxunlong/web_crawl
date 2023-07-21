@@ -37,12 +37,14 @@ class zh_Zaobao_Spider(scrapy.Spider):
                 return
             if date_time < self.start_time:
                 return
-            elif date_time < self.end_time:
-                date = str(date_time.date())
-                title = article.xpath(".//a//text()").get()
-                yield response.follow(url=article.xpath(".//@href").get(),
-                                      callback=self.parse_article,
-                                      cb_kwargs={"date": date, "title": title})
+            elif date_time >= self.end_time:
+                continue
+
+            date = str(date_time.date())
+            title = article.xpath(".//a//text()").get()
+            yield response.follow(url=article.xpath(".//@href").get(),
+                                    callback=self.parse_article,
+                                    cb_kwargs={"date": date, "title": title})
 
         next_page_link = response.xpath(
             '//a[@class="pagination-link pagination-link-next"]/@href').get()

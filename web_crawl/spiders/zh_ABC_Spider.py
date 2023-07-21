@@ -6,7 +6,8 @@ import json
 class zh_ABC_Spider(scrapy.Spider):
     name = 'zh_ABC'
     allowed_domains = ['abc.net.au']
-    start_urls = ['https://www.abc.net.au/news-web/api/loader/channelrefetch?name=PaginationArticles&documentId=13544740&size=250&total=250']
+    start_urls = [
+        'https://www.abc.net.au/news-web/api/loader/channelrefetch?name=PaginationArticles&documentId=13544740&size=250&total=250']
 
     def __init__(self, start_date, end_date):
         self.start_date = start_date
@@ -23,18 +24,24 @@ class zh_ABC_Spider(scrapy.Spider):
             if date_time < self.start_time:
                 continue
 
-            elif date_time < self.end_time:
-                date = str(date_time.date())
-                yield response.follow(url=item["link"]["to"],
-                                      callback=self.parse_article,
-                                      cb_kwargs={"date": date})
+            elif date_time >= self.end_time:
+                continue
+
+            date = str(date_time.date())
+            url=item["link"]["to"]
+
+            yield response.follow(url=url,
+                                  callback=self.parse_article,
+                                  cb_kwargs={"date": date})
 
     def parse_article(self, response, *args, **kwargs):
         date = kwargs["date"]
         title = response.xpath('//h1[@data-component="Heading"]/text()').get()
         text_nodes = response.xpath('//div[@id="body"]/div/div/div/p')
-        texts=[''.join(text_node.xpath(".//text()").getall()).replace('\n', " ") for text_node in text_nodes if not text_node.xpath('.//script')]
-        text = "\n".join([t.strip() for t in texts if t.strip()]).replace(u'\xa0', " ").replace(u'\u3000', " ")
+        texts = [''.join(text_node.xpath(".//text()").getall()).replace('\n', " ")
+                 for text_node in text_nodes if not text_node.xpath('.//script')]
+        text = "\n".join([t.strip() for t in texts if t.strip()]).replace(
+            u'\xa0', " ").replace(u'\u3000', " ")
         if text:
             yield {"date": date,
                    "source": self.name,
@@ -46,4 +53,3 @@ class zh_ABC_Spider(scrapy.Spider):
 
     scrapy.utils.misc.warn_on_generator_with_return_value = warn_on_generator_with_return_value_stub
     scrapy.core.scraper.warn_on_generator_with_return_value = warn_on_generator_with_return_value_stub
-

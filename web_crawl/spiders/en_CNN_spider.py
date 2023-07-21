@@ -34,14 +34,19 @@ class en_CNNSpider_spider(scrapy.Spider):
 
             date_time_str = article.xpath('./span[@class="date"]/text()').get()
             date_time = datetime.strptime(date_time_str, "%Y-%m-%d")
+            
             if date_time < self.start_time:
                 return
-            elif date_time < self.end_time:
-                date = str(date_time.date())
-                title = article.xpath('./span[@class="sitemap-link"]/a/text()').get()
-                yield scrapy.Request(url=response.urljoin(article.xpath(".//@href").get()),
-                                     callback=self.parse_article,
-                                     cb_kwargs={"date": date, "title": title})
+            elif date_time >= self.end_time:
+                continue
+
+            date = str(date_time.date())
+            title = article.xpath('./span[@class="sitemap-link"]/a/text()').get()
+            url=response.urljoin(article.xpath(".//@href").get())
+
+            yield scrapy.Request(url=url,
+                                 callback=self.parse_article,
+                                 cb_kwargs={"date": date, "title": title})
 
 
     def parse_article(self, response, *args, **kwargs):

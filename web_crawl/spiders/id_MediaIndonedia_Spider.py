@@ -39,13 +39,16 @@ class id_MediaIndonedia_Spider(scrapy.Spider):
 
             if date_time < self.start_time:
                 return
-            elif date_time < self.end_time:
-                date = str(date_time.date())
-                url = article.xpath('.//h2/a/@href').get()
-                title = article.xpath('.//h2/a/@title').get()
-                yield scrapy.Request(url=url,
-                                     callback=self.parse_article,
-                                     cb_kwargs={"date": date, "title": title})
+            elif date_time >= self.end_time:
+                continue
+
+            date = str(date_time.date())
+            url = article.xpath('.//h2/a/@href').get()
+            title = article.xpath('.//h2/a/@title').get()
+            
+            yield scrapy.Request(url=url,
+                                    callback=self.parse_article,
+                                    cb_kwargs={"date": date, "title": title})
 
         next_page_link = response.xpath('//a[@rel="next"]/@href').get()
         if next_page_link:

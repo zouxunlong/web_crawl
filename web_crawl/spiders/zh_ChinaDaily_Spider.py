@@ -48,12 +48,14 @@ class zh_ChinaDaily_Spider(scrapy.Spider):
             date_time = datetime.strptime(date_time_str, "%Y%m%d")
             if date_time < self.start_time:
                 return
-            elif date_time < self.end_time:
-                date = str(date_time.date())
-                title = article.xpath(".//h3/a/text()").get()
-                yield scrapy.Request(url='https:' + url,
-                                     callback=self.parse_article,
-                                     cb_kwargs={"date": date, "title": title})
+            elif date_time >= self.end_time:
+                continue
+
+            date = str(date_time.date())
+            title = article.xpath(".//h3/a/text()").get()
+            yield scrapy.Request(url='https:' + url,
+                                    callback=self.parse_article,
+                                    cb_kwargs={"date": date, "title": title})
 
         next_page_link = response.xpath('//a[text()="Next"]/@href').get()
         if next_page_link:

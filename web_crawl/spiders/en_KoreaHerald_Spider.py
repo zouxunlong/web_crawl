@@ -22,15 +22,16 @@ class en_KoreaHerald_Spider(scrapy.Spider):
             date_time = datetime.strptime(date_time_str, "%b %d, %Y")
             if date_time < self.start_time:
                 return
-            elif date_time < self.end_time:
+            elif date_time >= self.end_time:
+                continue
 
-                date = str(date_time.date())
-                title = article.xpath(
-                    './/div[@class="main_l_t1"]/text()').get()
-                url = article.xpath('./a/@href').get()
-                yield response.follow(url=url,
-                                      callback=self.parse_article,
-                                      cb_kwargs={"date": date, "title": title})
+            date = str(date_time.date())
+            title = article.xpath('.//div[@class="main_l_t1"]/text()').get()
+            url = article.xpath('./a/@href').get()
+            
+            yield response.follow(url=url,
+                                    callback=self.parse_article,
+                                    cb_kwargs={"date": date, "title": title})
 
         self.page += 1
         next_page_link = self.base_url + str(self.page)

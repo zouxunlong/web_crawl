@@ -46,6 +46,7 @@ class ElasticSearchPipeline:
         )
 
     def open_spider(self, spider):
+        spider.crawler.stats.set_value("spider_name", spider.name)
         self.client = Elasticsearch(
             self.ES_CONNECTION_STRING).options(ignore_status=400)
 

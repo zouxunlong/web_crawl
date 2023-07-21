@@ -28,7 +28,6 @@ class ms_Bernama_Spider(scrapy.Spider):
         self.start_time = datetime.combine(start_date, time())
         self.end_time = datetime.combine(end_date, time())
 
-
     def parse(self, response):
 
         articles = response.xpath(
@@ -40,13 +39,16 @@ class ms_Bernama_Spider(scrapy.Spider):
 
             if date_time < self.start_time:
                 return
-            elif date_time < self.end_time:
-                date = str(date_time.date())
-                title = article.xpath("./h6//text()").get()
-                yield scrapy.Request(url=article.xpath(".//h6/a/@href").get(),
-                                     callback=self.parse_article,
-                                     cb_kwargs={"date": date,
-                                                "title": title})
+            elif date_time >= self.end_time:
+                continue
+
+            date = str(date_time.date())
+            title = article.xpath("./h6//text()").get()
+            url = article.xpath(".//h6/a/@href").get()
+
+            yield scrapy.Request(url=url,
+                                 callback=self.parse_article,
+                                 cb_kwargs={"date": date,  "title": title})
 
         next_page_link = response.xpath(
             '//i[@class="fa fa-chevron-right"]/parent::a/@href').get()
@@ -54,21 +56,22 @@ class ms_Bernama_Spider(scrapy.Spider):
             yield scrapy.Request(url='https://bernama.com/bm/'+next_page_link, callback=self.parse)
 
     def parse_article(self, response, *args, **kwargs):
-        
+
         date = kwargs["date"]
         title = kwargs["title"]
-        text_nodes = response.xpath('//div[@class="col-12 mt-3 text-dark text-justify"]/p')
-        texts=[''.join(text_node.xpath(".//text()").getall()).replace('\n', " ") for text_node in text_nodes if not text_node.xpath('.//script')]
-        text = "\n".join([t.strip() for t in texts if t.strip()]).replace(u'\xa0', " ").replace(u'\u3000', " ")
+        text_nodes = response.xpath(
+            '//div[@class="col-12 mt-3 text-dark text-justify"]/p')
+        texts = [''.join(text_node.xpath(".//text()").getall()).replace('\n', " ")
+                 for text_node in text_nodes if not text_node.xpath('.//script')]
+        text = "\n".join([t.strip() for t in texts if t.strip()]).replace(
+            u'\xa0', " ").replace(u'\u3000', " ")
         if text:
             yield {"date": date,
                    "source": self.name,
                    "title": title,
                    "text": text}
 
-
     def warn_on_generator_with_return_value_stub(spider, callable):
         pass
     scrapy.utils.misc.warn_on_generator_with_return_value = warn_on_generator_with_return_value_stub
     scrapy.core.scraper.warn_on_generator_with_return_value = warn_on_generator_with_return_value_stub
-

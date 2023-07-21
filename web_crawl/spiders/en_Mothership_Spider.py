@@ -41,13 +41,16 @@ class en_Mothership_Spider(scrapy.Spider):
             date_time = datetime.strptime(date_time_str, "%B %d, %Y, %H:%M %p")
             if date_time < self.start_time:
                 return
-            elif date_time < self.end_time:
-                date = str(date_time.date())
-                title = article.xpath('.//h1/text()').get()
-                url = article.xpath('./@href').get()
-                yield response.follow(url=url,
-                                      callback=self.parse_article,
-                                      cb_kwargs={"date": date, "title": title})
+            elif date_time >= self.end_time:
+                continue
+
+            date = str(date_time.date())
+            title = article.xpath('.//h1/text()').get()
+            url = article.xpath('./@href').get()
+            
+            yield response.follow(url=url,
+                                    callback=self.parse_article,
+                                    cb_kwargs={"date": date, "title": title})
 
     def parse_article(self, response, *args, **kwargs):
 

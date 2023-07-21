@@ -18,23 +18,28 @@ class vi_Nhandan_Spider(scrapy.Spider):
         self.i=0
 
     def parse(self, response):
+        
         articles = json.loads(response.body)['data']['articles']
         sel = scrapy.Selector(text=articles)
         articles = sel.xpath('//article')
+        
         for article in articles:
 
-            date_time_str = article.xpath(
-                './/a[@class="text text2"]/text()')[-1].get().strip()
+            date_time_str = article.xpath('.//a[@class="text text2"]/text()')[-1].get().strip()
             date_time = datetime.strptime(date_time_str, "%d/%m/%Y %H:%M")
+            
             if date_time < self.start_time:
                 return
-            elif date_time < self.end_time:
-                url = article.xpath('./h3/a/@href').get()
-                date = str(date_time.date())
-                title = article.xpath('./h3/a/@title').get()
-                yield scrapy.Request(url=url,
-                                     callback=self.parse_article,
-                                     cb_kwargs={"date": date, "title": title})
+            elif date_time >= self.end_time:
+                continue
+
+            url = article.xpath('./h3/a/@href').get()
+            date = str(date_time.date())
+            title = article.xpath('./h3/a/@title').get()
+            
+            yield scrapy.Request(url=url,
+                                    callback=self.parse_article,
+                                    cb_kwargs={"date": date, "title": title})
 
         self.i += 1
         if self.i < 100:
@@ -42,11 +47,14 @@ class vi_Nhandan_Spider(scrapy.Spider):
 
 
     def parse_article(self, response, *args, **kwargs):
+        
         date = kwargs["date"]
         title = kwargs["title"]
+        
         text_nodes = response.xpath('//div[@class="article__body cms-body"]/p')
         texts=[''.join(text_node.xpath(".//text()").getall()).replace('\n', " ") for text_node in text_nodes if not text_node.xpath('.//script')]
         text = "\n".join([t.strip() for t in texts if t.strip()]).replace(u'\xa0', " ").replace(u'\u3000', " ")
+        
         if text:
             yield {"date": date,
                    "source": self.name,

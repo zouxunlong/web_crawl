@@ -32,15 +32,16 @@ class en_StraitsTimes_Spider(scrapy.Spider):
 
             if date_time < self.start_time:
                 return
-            elif date_time < self.end_time:
-                
-                date = str(date_time.date())
-                title = article.xpath('./h5/a/text()').get()
-                url = article.xpath('./h5/a/@href').get()
+            elif date_time >= self.end_time:
+                continue
 
-                yield response.follow(url=url,
-                                      callback=self.parse_article,
-                                      cb_kwargs={"date": date, "title": title})
+            date = str(date_time.date())
+            title = article.xpath('./h5/a/text()').get()
+            url = article.xpath('./h5/a/@href').get()
+
+            yield response.follow(url=url,
+                                    callback=self.parse_article,
+                                    cb_kwargs={"date": date, "title": title})
 
         next_page_link = response.xpath(
             '//a[@title="Go to next page"]/@href').get()

@@ -25,15 +25,16 @@ class en_TechCrunch_Spider(scrapy.Spider):
 
             if date_time < self.start_time:
                 return
-            elif date_time < self.end_time:
+            elif date_time >= self.end_time:
+                continue
 
-                date = str(date_time.date())
-                url = item["link"]
-                title = item["title"]["rendered"]
+            date = str(date_time.date())
+            url = item["link"]
+            title = item["title"]["rendered"]
 
-                yield response.follow(url=url,
-                                      callback=self.parse_article,
-                                      cb_kwargs={"date": date, "title": title})
+            yield response.follow(url=url,
+                                    callback=self.parse_article,
+                                    cb_kwargs={"date": date, "title": title})
 
         self.page += 1
         next_page_link = self.base_url + str(self.page)

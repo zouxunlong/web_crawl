@@ -34,13 +34,16 @@ class vi_Tuoitre_Spider(scrapy.Spider):
 
             if date_time < self.start_time:
                 return
-            elif date_time < self.end_time:
-                url = article.xpath("./div/h3/a/@href").get()
-                date = str(date_time.date())
-                title = article.xpath('./div/h3/a/@title').get()
-                yield response.follow(url=url,
-                                      callback=self.parse_article,
-                                      cb_kwargs={"date": date, "title": title})
+            elif date_time >= self.end_time:
+                continue
+
+            url = article.xpath("./div/h3/a/@href").get()
+            date = str(date_time.date())
+            title = article.xpath('./div/h3/a/@title').get()
+            
+            yield response.follow(url=url,
+                                    callback=self.parse_article,
+                                    cb_kwargs={"date": date, "title": title})
 
 
     def parse_article(self, response, *args, **kwargs):

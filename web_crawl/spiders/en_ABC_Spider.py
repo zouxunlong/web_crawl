@@ -22,10 +22,14 @@ class en_ABC_Spider(scrapy.Spider):
         self.end_time = datetime.combine(end_date, time())
 
     def parse(self, response):
+        
         json_resp = json.loads(response.body)
+        
         for item in json_resp['collection']:
+            
             date_time_str = item["timestamp"]["dates"]["firstPublished"]
             date_time = datetime.strptime(date_time_str[:10], "%Y-%m-%d")
+            
             if date_time < self.start_time or date_time >= self.end_time:
                 continue
 
@@ -43,6 +47,7 @@ class en_ABC_Spider(scrapy.Spider):
 
         date = kwargs["date"]
         title = kwargs["title"]
+        
         text_nodes = response.xpath('//div[@id="body"]/div/div/div/*[self::p or self::h2]')
         texts=[''.join(text_node.xpath(".//text()").getall()).replace('\n', " ") for text_node in text_nodes if not text_node.xpath('.//script')]
         text = "\n".join([t.strip() for t in texts if t.strip()]).replace(u'\xa0', " ").replace(u'\u3000', " ")
