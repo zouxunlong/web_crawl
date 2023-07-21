@@ -50,7 +50,7 @@ class en_MoscowTimes_Spider(scrapy.Spider):
                  for text_node in text_nodes if not text_node.xpath('.//script')]
         text = "\n".join([t.strip() for t in texts if t.strip()]).replace(
             u'\xa0', " ").replace(u'\u3000', " ")
-        if text:
+        if text and title:
             yield {"date": date,
                    "source": self.name,
                    "title": title,

@@ -55,7 +55,7 @@ class en_StraitsTimes_Spider(scrapy.Spider):
         text_nodes = response.xpath('//div[@class="clearfix text-formatted field field--name-field-paragraph-text field--type-text-long field--label-hidden field__item"]/p')
         texts=[''.join(text_node.xpath(".//text()").getall()).replace('\n', " ") for text_node in text_nodes if not text_node.xpath('.//script')]
         text = "\n".join([t.strip() for t in texts if t.strip()]).replace(u'\xa0', " ").replace(u'\u3000', " ")
-        if text:
+        if text and title:
             yield {"date": date,
                    "source": self.name,
                    "title": title,

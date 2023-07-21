@@ -12,8 +12,7 @@ class zh_Sina_Spider(scrapy.Spider):
         self.end_date = end_date
         self.start_time = datetime.combine(start_date, time())
         self.end_time = datetime.combine(end_date, time())
-        base_url = 'https://feed.mix.sina.com.cn/api/roll/get?pageid=153&lid=2509&k=&num=50&page='
-        self.start_urls = [base_url + str(x+1) for x in range(50)]
+        self.start_urls = ['https://feed.mix.sina.com.cn/api/roll/get?pageid=153&lid=2509&k=&num=50&page={}'.format(str(x+1)) for x in range(50)]
 
     def parse(self, response):
         json_resp = json.loads(response.body)
@@ -44,7 +43,7 @@ class zh_Sina_Spider(scrapy.Spider):
                  for text_node in text_nodes if not text_node.xpath('.//script')]
         text = "\n".join([t.strip() for t in texts if t.strip()]).replace(
             u'\xa0', " ").replace(u'\u3000', " ")
-        if text:
+        if text and title:
             yield {"date": date,
                    "source": self.name,
                    "title": title,
