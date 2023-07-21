@@ -40,8 +40,8 @@ class en_France24News_Spider(scrapy.Spider):
         if text and title:
             yield {"date": date,
                    "source": self.name,
-                   "title": title,
-                   "text": text}
+                   "title": title.strip(),
+                   "text": text.strip()}
 
 
 

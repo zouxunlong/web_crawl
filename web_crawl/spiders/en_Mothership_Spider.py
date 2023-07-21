@@ -62,6 +62,10 @@ class en_Mothership_Spider(scrapy.Spider):
         if text and title:
             yield {"date": date,
                    "source": self.name,
-                   "title": title,
-                   "text": text}
+                   "title": title.strip(),
+                   "text": text.strip()}
 
+    def warn_on_generator_with_return_value_stub(spider, callable):
+        pass
+    scrapy.utils.misc.warn_on_generator_with_return_value = warn_on_generator_with_return_value_stub
+    scrapy.core.scraper.warn_on_generator_with_return_value = warn_on_generator_with_return_value_stub

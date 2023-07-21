@@ -48,8 +48,8 @@ class id_KoranJakarta_Spider(scrapy.Spider):
         if text and title:
             yield {"date": date,
                    "source": self.name,
-                   "title": title,
-                   "text": text}
+                   "title": title.strip(),
+                   "text": text.strip()}
         
     def warn_on_generator_with_return_value_stub(spider, callable):
         pass
