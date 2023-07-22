@@ -2,8 +2,9 @@ import json
 import re
 from simhash import Simhash
 from elasticsearch import Elasticsearch
-from elasticsearch.helpers import bulk
+from elasticsearch.helpers import parallel_bulk, bulk
 import os
+
 
 ES_CONNECTION_STRING = "http://localhost:9200"
 es = Elasticsearch(ES_CONNECTION_STRING).options(ignore_status=400)
@@ -96,7 +97,8 @@ def put_news_article(input_path="/home/xuancong/web_crawl/data"):
                         for line in file_in:
                             item = json.loads(line)
 
-                            item['text'] = unwanted_character_filtered(item['text'])
+                            item['text'] = unwanted_character_filtered(
+                                item['text'])
 
                             if 'ta' in [language_type] and not tamil_detected(item['text']):
                                 continue
@@ -120,9 +122,63 @@ def put_news_article(input_path="/home/xuancong/web_crawl/data"):
                             yield doc
 
 
+def put_forum_detik_id(input_path):
+    for rootdir, dirs, files in os.walk(input_path):
+        source = rootdir.split("/")[-1]
+        language_type = source[:2]
+        files.sort(reverse=True)
+        if language_type in ['en', 'zh', 'vi', 'th', 'ta', 'ms', 'id']:
+            index = 'social_media_'+language_type
+            for file in files:
+                if file.endswith('.jsonl'):
+                    input_file = os.path.join(rootdir, file)
+                    with open(input_file, encoding='utf8') as file_in:
+                        for i, line in enumerate(file_in):
+                            if i < 1490059:
+                                continue
+                            item = json.loads(line)
 
-response = bulk(client=es, actions=put_news_article())
-print(response, flush=True)
+                            item['text'] = unwanted_character_filtered(
+                                item.pop('post_text'))
+                            item['title'] = item.pop(
+                                'channel_title')+' / '+item.pop('thread_title')
+
+                            item['source'] = source
+                            item['language_type'] = language_type
+
+                            if not item['title'] or not item['title'].strip():
+                                continue
+                            if not item['text'] or not item['text'].strip():
+                                continue
+                            if 'ta' in [language_type] and not tamil_detected(item['text']):
+                                continue
+                            if 'vi' in [language_type] and not vietnamese_detected(item['text']):
+                                continue
+                            if 'zh' in [language_type] and not chinese_detected(item['text']):
+                                continue
+                            if not item['text'].strip():
+                                continue
+
+                            doc = {
+                                '_index': index,
+                                '_id': item['thread_id'],
+                                'language_type': item['language_type'],
+                                'source': item['source'],
+                                'url': item['thread_url'],
+                                'title': item['title'],
+                                'text': item['text'],
+                            }
+
+                            yield doc
+
+
+res = bulk(client=es,
+           actions=put_forum_detik_id("/home/xuancong/web_crawl/data/social_media"),
+           chunk_size=100,
+           max_chunk_bytes=10485760
+           )
+
+print(res, flush=True)
 
 
 # doc = {
