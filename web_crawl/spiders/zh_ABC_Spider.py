@@ -22,7 +22,7 @@ class zh_ABC_Spider(scrapy.Spider):
             date_time = datetime.strptime(date_time_str[:19], "%Y-%m-%dT%X")
 
             if date_time < self.start_time:
-                continue
+                return
 
             elif date_time >= self.end_time:
                 continue

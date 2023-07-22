@@ -2,9 +2,7 @@ import html
 import itertools
 import json
 import re
-from simhash import Simhash
 from elasticsearch import Elasticsearch
-from elasticsearch.helpers import bulk
 import os
 from sentsplit.segment import SentSplit
 from thai_segmenter import sentence_segment
@@ -150,6 +148,16 @@ def process_news_article(input_path):
                             file_out.write(json.dumps(item, ensure_ascii=False)+'\n')
                     print("finished {}".format(input_file), flush=True)
 
+
+def rename(input_path):
+    for rootdir, dirs, files in os.walk(input_path):
+        files.sort(reverse=True)
+        for file in files:
+            if file.endswith('.jl'):
+                input_file = os.path.join(rootdir, file)
+                output_file = os.path.join(rootdir, file.replace('jl', 'jsonl'))
+                os.rename(input_file, output_file)
+
 if __name__=="__main__":
-    process_news_article("/home/xuancong/web_crawl/data")
+    rename("/home/xuancong/web_crawl/data")
     print("all finished", flush=True)

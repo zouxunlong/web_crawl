@@ -3,7 +3,7 @@ from datetime import time, datetime
 
 
 class ta_Theekkathir_Spider(scrapy.Spider):
-    name = 'ta_theekkathir'
+    name = 'ta_Theekkathir'
     allowed_domains = ['theekkathir.in']
     start_urls = ['https://theekkathir.in/News/GetNewsListByCategory?CategoryName=world&PageNo=1']
     base_url = 'https://theekkathir.in/News/GetNewsListByCategory?CategoryName=world&PageNo='

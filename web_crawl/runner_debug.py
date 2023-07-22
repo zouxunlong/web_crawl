@@ -1,19 +1,25 @@
 from datetime import date, timedelta
+import scrapy
 from scrapy.crawler import CrawlerRunner
-from scrapy.utils.log import configure_logging
+from scrapy.utils.log import configure_logging, logger
 from twisted.internet import reactor
 from scrapy.utils.project import get_project_settings
 
 
 def main_runner(spider_name):
     settings = get_project_settings()
+    settings.delete("LOG_FILE")
     configure_logging(settings)
     runner = CrawlerRunner(settings)
     d = runner.crawl(spider_name, start_date=date.today() - timedelta(1), end_date=date.today())
     d.addBoth(lambda _: reactor.stop())
     reactor.run()
+    logger.info(
+        "Scrapy %(version)s finished (bot: %(bot)s)",
+        {"version": scrapy.__version__, "bot": settings["BOT_NAME"]},
+    )
 
 
 if __name__ == "__main__":
-    main_runner("th_koratdaily")
+    main_runner("zh_ABC")
     print("finished all", flush=True)
