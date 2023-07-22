@@ -61,6 +61,6 @@ def main():
         time.sleep(300)
 
 if __name__ == '__main__':
-    # main()
-    main_process(date.today() - timedelta(2), date.today() - timedelta(1))
+    print("start schedule", flush=True)
+    main()
     print("finished all", flush=True)
