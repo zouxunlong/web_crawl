@@ -11,13 +11,10 @@ def main_runner(spider_name):
     settings.delete("LOG_FILE")
     configure_logging(settings)
     runner = CrawlerRunner(settings)
-    d = runner.crawl(spider_name, start_date=date.today() - timedelta(1), end_date=date.today())
+    d = runner.crawl(spider_name, start_date=date.today() - timedelta(2), end_date=date.today() - timedelta(1))
     d.addBoth(lambda _: reactor.stop())
     reactor.run()
-    logger.info(
-        "Scrapy %(version)s finished (bot: %(bot)s)",
-        {"version": scrapy.__version__, "bot": settings["BOT_NAME"]},
-    )
+    logger.info("finished all")
 
 
 if __name__ == "__main__":
