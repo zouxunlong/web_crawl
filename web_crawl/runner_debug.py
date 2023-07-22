@@ -1,5 +1,4 @@
 from datetime import date, timedelta
-import scrapy
 from scrapy.crawler import CrawlerRunner
 from scrapy.utils.log import configure_logging, logger
 from twisted.internet import reactor
