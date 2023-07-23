@@ -5,7 +5,7 @@ from scrapy.crawler import CrawlerRunner
 from scrapy.utils.log import configure_logging
 from time import localtime, strftime
 from bs4 import BeautifulSoup
-import justext
+
 
 
 class SG_Spider(CrawlSpider):
@@ -31,6 +31,10 @@ class SG_Spider(CrawlSpider):
                 }
         except AttributeError as e:
             print(e, response.url, flush=True)
+
+
+    def closed(self, reason):
+        self.crawler.stats.set_value("spider_name", self.name)
 
 
 def main():
