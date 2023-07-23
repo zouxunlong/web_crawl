@@ -37,7 +37,7 @@ def main():
 
     settings = {
         "FEEDS": {
-            '/home/xuanlong/sg_crawl_data/data/massive_crawl/%(domain)s.jsonl': {
+            '../data/massive_crawl/%(domain)s.jsonl': {
                 'format': 'jsonlines',
                 "overwrite": True,
                 "encoding": "utf8",
@@ -64,7 +64,7 @@ def main():
     configure_logging(settings)
     runner = CrawlerRunner(settings)
 
-    lines=open(file='/home/xuanlong/sg_crawl_data/domains_count_en.txt', mode='r', encoding='utf8').readlines()
+    lines=open(file='./domains_count_en.txt', mode='r', encoding='utf8').readlines()
     domains=[line.split("|||")[1][:-11] for line in lines]
 
     for domain in domains[:100]:
