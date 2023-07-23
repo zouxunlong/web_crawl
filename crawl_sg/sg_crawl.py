@@ -5,6 +5,7 @@ from scrapy.crawler import CrawlerRunner
 from scrapy.utils.log import configure_logging
 from time import localtime, strftime
 from bs4 import BeautifulSoup
+import justext
 
 
 class SG_Spider(CrawlSpider):
@@ -44,6 +45,7 @@ def main():
         },
         "DOWNLOADER_MIDDLEWARES": {
             "crawler_sg_middleware.RandomUserAgentMiddleware": 543,
+            "scrapy.downloadermiddlewares.useragent.UserAgentMiddleware": None,
         },
         "LOG_LEVEL": "INFO",
         "DEPTH_PRIORITY": 1,
