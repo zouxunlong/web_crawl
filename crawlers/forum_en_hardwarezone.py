@@ -4,8 +4,6 @@ import scrapy
 import plac
 
 
-
-
 class HardwareZoneSpider(scrapy.Spider):
 
     name = 'hardwarezone'
@@ -100,10 +98,10 @@ def main(output_path='/home/xuancong/web_crawl/data/social_media/en_hardwarezone
                     "encoding": "utf8",
                 },
             },
-            "LOG_LEVEL": "INFO",
             "DOWNLOADER_MIDDLEWARES": {
                 "middlewares.WebCrawlDownloaderMiddleware": 543,
-            }
+            },
+            "LOG_LEVEL": "INFO",
         }
     )
     process.crawl(HardwareZoneSpider)

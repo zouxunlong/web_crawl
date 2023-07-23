@@ -153,12 +153,12 @@ class th_koratdaily_Spider(scrapy.Spider):
     scrapy.core.scraper.warn_on_generator_with_return_value = warn_on_generator_with_return_value_stub
 
 
-def main(output_path='/home/xuancong/web_crawl/data/th_koratdaily/th_koratdaily.jsonl'):
+def main():
 
     process = CrawlerProcess(
         settings={
             "FEEDS": {
-                output_path: {
+                '/home/xuancong/web_crawl/data/%(name)s/%(name)s.jsonl': {
                     "format": "jsonlines",
                     "overwrite": True,
                     "encoding": "utf8",
