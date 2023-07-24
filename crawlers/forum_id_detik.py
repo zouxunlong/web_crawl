@@ -84,6 +84,9 @@ class DetikSpider(scrapy.Spider):
 
             yield result
 
+    def closed(self, reason):
+        self.crawler.stats.set_value("spider_name", self.name)
+
 
     def warn_on_generator_with_return_value_stub(spider, callable):
         pass

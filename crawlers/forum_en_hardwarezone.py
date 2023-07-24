@@ -86,6 +86,9 @@ class HardwareZoneSpider(scrapy.Spider):
                 }
                 yield result
 
+    def closed(self, reason):
+        self.crawler.stats.set_value("spider_name", self.name)
+
 
 def main():
 
