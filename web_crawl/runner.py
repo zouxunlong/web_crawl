@@ -3,6 +3,7 @@ from datetime import date, timedelta, datetime
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 from scrapy.utils.log import logger
+from multiprocessing import Process
 
 
 def main_process(start_date, end_date):
@@ -56,7 +57,9 @@ def main():
     while True:
         if datetime.now().hour in [0] and datetime.now().minute in range(5):
             logger.info("schedule----------------------------start")
-            main_process(date.today() - timedelta(2), date.today() - timedelta(1))
+            p = Process(target=main_process(date.today() - timedelta(2), date.today() - timedelta(1)))
+            p.start()
+            p.join()
             logger.info("schedule----------------------------finished")
         time.sleep(300)
 
