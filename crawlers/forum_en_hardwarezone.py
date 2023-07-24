@@ -6,7 +6,7 @@ import plac
 
 class HardwareZoneSpider(scrapy.Spider):
 
-    name = 'hardwarezone'
+    name = 'en_hardwarezone'
 
     start_urls = ['https://forums.hardwarezone.com.sg/', ]
 
@@ -87,12 +87,12 @@ class HardwareZoneSpider(scrapy.Spider):
                 yield result
 
 
-def main(output_path='/home/xuancong/web_crawl/data/social_media/en_hardwarezone/en_hardwarezone.jsonl'):
+def main():
 
     process = CrawlerProcess(
         settings={
             "FEEDS": {
-                output_path: {
+                '/home/xuancong/web_crawl/data/social_media/%(name)s/%(name)s.jsonl': {
                     "format": "jsonlines",
                     "overwrite": True,
                     "encoding": "utf8",
