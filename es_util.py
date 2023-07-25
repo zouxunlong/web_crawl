@@ -170,6 +170,47 @@ def put_forum_detik_id(input_path):
                             yield doc
 
 
+def put_forum_kaskus_id(input_path):
+
+    index = 'social_media_id'
+    with open(input_path, encoding='utf8') as file_in:
+        for i, line in enumerate(file_in):
+            item = json.loads(line)
+            if not item['text'] or not item['text'].strip():
+                continue
+            doc = {
+                '_index': index,
+                '_id': item['thread_id'],
+                'language_type': item['language_type'],
+                'source': item['source'],
+                'url': item['url'],
+                'text': item['text'],
+            }
+            yield doc
+
+
+def put_forum_hardwarezone_en(input_path):
+
+    index = 'social_media_en'
+    source = 'en_hardwarezone'
+    language_type = 'en'
+    with open(input_path, encoding='utf8') as file_in:
+        for i, line in enumerate(file_in):
+            item = json.loads(line)
+            if not item['post_text'] or not item['post_text'].strip():
+                continue
+            doc = {
+                '_index': index,
+                '_id': Simhash(item['post_text'].strip(), f=64, reg=r'[\S]').value,
+                'language_type': language_type,
+                'source': source,
+                'url': item['thread_url'],
+                'title': item['channel_title'] + ' / ' +item['thread_title'],
+                'text': item['post_text'].strip(),
+            }
+            yield doc
+
+
 def transfer_kaskus_id(input_path):
     
     source = 'id_kaskus'
@@ -238,7 +279,7 @@ def put_bt_data(input_path):
 
 
 res = bulk(client=es,
-           actions=put_bt_data("/home/xuanlong/dataclean/data/stage5"),
+           actions=put_forum_hardwarezone_en("/home/xuancong/web_crawl/data/social_media/en_hardwarezone/en_hardwarezone.jsonl"),
            chunk_size=100,
            max_chunk_bytes=10485760
            )
