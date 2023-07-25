@@ -17,5 +17,5 @@ def main_runner(spider_name):
 
 
 if __name__ == "__main__":
-    main_runner("en_Theindependent")
+    main_runner("en_Weekender")
     print("finished all", flush=True)

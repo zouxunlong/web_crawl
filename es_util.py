@@ -138,10 +138,8 @@ def put_forum_detik_id(input_path):
                                 continue
                             item = json.loads(line)
 
-                            item['text'] = unwanted_character_filtered(
-                                item.pop('post_text'))
-                            item['title'] = item.pop(
-                                'channel_title')+' / '+item.pop('thread_title')
+                            item['text'] = unwanted_character_filtered(item.pop('post_text'))
+                            item['title'] = item.pop('channel_title')+' / '+item.pop('thread_title')
 
                             item['source'] = source
                             item['language_type'] = language_type
@@ -172,14 +170,83 @@ def put_forum_detik_id(input_path):
                             yield doc
 
 
+def transfer_kaskus_id(input_path):
+    
+    source = 'id_kaskus'
+    language_type = 'id'
+    # index = 'social_media_id'
+    with open('/home/xuancong/web_crawl/data/social_media/id_kaskus/id_kaskus.jsonl', 'w', encoding='utf8') as file_out:
+
+        for rootdir, dirs, files in os.walk(input_path):
+
+            files.sort()
+            for file in files:
+                item={}
+
+                input_file = os.path.join(rootdir, file)
+                text=open(input_file, encoding='utf8').read()
+
+                text = unwanted_character_filtered(text).strip()
+                item['text'] = '\n\n---POST---\n\n'.join([post for i, post in enumerate(text.split('\n\n---POST---\n\n')) if (i==0 or i%21!=0) and not post.startswith('Quote:')])
+                item['thread_id']=file.split('.')[0]
+                item['source']=source
+                item['language_type']=language_type
+                item['url']='https://www.kaskus.co.id/thread/'+item['thread_id']
+
+                if item['text'] and item['thread_id']:
+                    file_out.write(json.dumps(item)+"\n")
+
+
+def put_bt_data(input_path):
+    for rootdir, dirs, files in os.walk(input_path):
+        source = rootdir.split("/")[-1]
+        files.sort(reverse=True)
+        index = 'bt_data'
+        for file in files:
+            language_type = file.split('.')[-1]
+            lang_src, lang_tgt=language_type.split('2')
+            domain='news'
+            input_file = os.path.join(rootdir, file)
+            with open(input_file, encoding='utf8') as file_in:
+                for line in file_in:
+                    item={}
+                    score, sentence_src, sentence_tgt=line.split('|||')
+
+                    item['lang_src'] = lang_src
+                    item['lang_tgt'] = lang_tgt
+                    item['language_type'] = language_type
+                    item['source'] = source
+                    item['domain'] = domain
+                    item['LaBSE'] = float(score)
+                    item['sentence_'+lang_src] = sentence_src.strip()
+                    item['sentence_'+lang_tgt] = sentence_tgt.strip()
+
+                    doc = {
+                        '_index': index,
+                        '_id': Simhash(sentence_src.strip() + sentence_tgt.strip(), f=64, reg=r'[\S]').value,
+                        'language_type': item['language_type'],
+                        'source': item['source'],
+                        'lang_src': item['lang_src'],
+                        'lang_tgt': item['lang_tgt'],
+                        'domain': item['domain'],
+                        'LaBSE': item['LaBSE'],
+                        'sentence_'+lang_src: item['sentence_'+lang_src],
+                        'sentence_'+lang_tgt: item['sentence_'+lang_tgt],
+                    }
+
+                    yield doc
+
+
 res = bulk(client=es,
-           actions=put_forum_detik_id("/home/xuancong/web_crawl/data/social_media"),
+           actions=put_bt_data("/home/xuanlong/dataclean/data/stage5"),
            chunk_size=100,
            max_chunk_bytes=10485760
            )
 
 print(res, flush=True)
 
+# transfer_kaskus_id("/home/xuancong/airflow/data/id_kaskus")
+# print('finished all', flush=True)
 
 # doc = {
 #     'author': 'author_name',
