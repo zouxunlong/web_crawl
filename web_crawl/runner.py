@@ -56,7 +56,7 @@ def crawl():
     runner.crawl("zh_voachinese", start_date=date.today() - timedelta(2), end_date=date.today() - timedelta(1))
     runner.crawl("zh_zaobao", start_date=date.today() - timedelta(2), end_date=date.today() - timedelta(1))
     deferred = runner.join()
-    deferred.addCallback(schedule_next_crawl, hour=13, minute=30)
+    deferred.addCallback(schedule_next_crawl)
     logger.info("crawl end once.............................")
     return deferred
 
