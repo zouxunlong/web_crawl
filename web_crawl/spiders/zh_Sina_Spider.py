@@ -1,5 +1,5 @@
 import scrapy
-from datetime import time, datetime
+from datetime import time, datetime, timedelta
 import json
 
 
@@ -8,10 +8,10 @@ class zh_Sina_Spider(scrapy.Spider):
     allowed_domains = ['sina.com.cn']
 
     def __init__(self, start_date, end_date):
-        self.start_date = start_date
-        self.end_date = end_date
-        self.start_time = datetime.combine(start_date, time())
-        self.end_time = datetime.combine(end_date, time())
+        self.start_date = start_date + timedelta(1)
+        self.end_date = end_date + timedelta(1)
+        self.start_time = datetime.combine(self.start_date, time())
+        self.end_time = datetime.combine(self.end_date, time())
         self.start_urls = ['https://feed.mix.sina.com.cn/api/roll/get?pageid=153&lid=2509&k=&num=50&page={}'.format(str(x+1)) for x in range(50)]
 
     def parse(self, response):
