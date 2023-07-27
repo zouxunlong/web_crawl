@@ -1,13 +1,5 @@
-import itertools
-import json
-import os
-from pathlib import Path
 import socket
-import threading
-import time
 import requests
-import plac
-from concurrent.futures import ThreadPoolExecutor
 
 class Back_translator:
 
@@ -100,58 +92,4 @@ class Back_translator:
 
         if (src, tgt) in [('en', 'zh'), ('zh', 'en'), ('en', 'ms'), ('ms', 'en'), ('en', 'ta'), ('ta', 'en')]:
             return self.translate_sgtt(sentences_src, src, tgt)
-
-translator = Back_translator()
-
-def translation(input_file, output_file, src, tgt):
-
-    sentences_src = list(itertools.chain.from_iterable([json.loads(line)['split_sentences'] for line in open(input_file, encoding="utf8").readlines()]))
-
-    if not os.path.exists(output_file):
-
-        sentences_tgt = translator.translate(sentences_src, src, tgt)
-        assert len(sentences_src) == len(sentences_tgt), 'length of src and target do not match'
-
-        with open(output_file, "w", encoding="utf8") as f_out:
-            for i in range(len(sentences_src)):
-                f_out.write("{} ||| {}\n".format(sentences_src[i].replace("|", " "), sentences_tgt[i].replace("|", " ")))
-
-    print('finished {}'.format(input_file), flush=True)
-
-
-@ plac.pos('src', "source language", type=str)
-@ plac.pos('tgt', "target language", type=str)
-@ plac.pos('worker', "worker number", type=int)
-@ plac.pos('input_path', "Src File/dir", type=Path)
-def main(src='ms',
-         tgt='en',
-         worker=10,
-         input_dir="/home/xuanlong/web_crawl/data/news_article",
-         ):
-
-    os.chdir(os.path.dirname(__file__))
-
-    with ThreadPoolExecutor(max_workers=worker) as pool:
-
-        for rootdir, dirs, files in os.walk(input_dir):
-
-            src_lang = os.path.basename(rootdir)[:2]
-            if src_lang not in [src]:
-                continue
-            files.sort(reverse=True)
-
-            for file in files:
-
-                input_file = os.path.join(rootdir, file)
-                output_file = os.path.join(rootdir, file.replace('jsonl',src+'2'+tgt))
-                pool.submit(translation, input_file, output_file, src, tgt)
-
-                print('task submitted.....', flush=True)
-
-    print('ThreadPool closed.....', flush=True)
-
-
-if __name__ == "__main__":
-    plac.call(main)
-    print("finished all", flush=True)
 

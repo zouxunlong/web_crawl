@@ -158,6 +158,13 @@ def rename(input_path):
                 output_file = os.path.join(rootdir, file.replace('jl', 'jsonl'))
                 os.rename(input_file, output_file)
 
+def delete(input_path):
+    for rootdir, dirs, files in os.walk(input_path):
+        for file in files:
+            if not file.endswith('.jsonl'):
+                input_file = os.path.join(rootdir, file)
+                os.remove(input_file)
+
 if __name__=="__main__":
-    rename("/home/xuancong/web_crawl/data")
+    delete("/home/xuanlong/web_crawl/data/news_article")
     print("all finished", flush=True)

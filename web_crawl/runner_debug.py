@@ -8,10 +8,11 @@ settings = get_project_settings()
 settings.delete("LOG_FILE")
 configure_logging(settings)
 
-
 def crawl():
     runner = CrawlerRunner(settings)
-    d = runner.crawl("en_Theindependent", start_date=date.today() - timedelta(2), end_date=date.today() - timedelta(1))
+    runner.crawl("en_Theindependent", start_date=date.today() - timedelta(2), end_date=date.today() - timedelta(1))
+    runner.crawl("zh_ABC", start_date=date.today() - timedelta(2), end_date=date.today() - timedelta(1))
+    d=runner.join()
     d.addBoth(lambda _: reactor.stop())
     reactor.run()
 
