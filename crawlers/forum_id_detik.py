@@ -68,7 +68,7 @@ class DetikSpider(scrapy.Spider):
             thread_title = response.meta['thread_title']
             thread_url = response.meta['thread_url']
 
-            with open('/home/xuancong/airflow/data/id_detik/'+str(thread_id)+'.txt','w', encoding='utf8') as f_out:
+            with open('~/airflow/data/id_detik/'+str(thread_id)+'.txt','w', encoding='utf8') as f_out:
                 f_out.write(thread_title+'\n\n')
                 f_out.write(thread_url+'\n\n')
                 f_out.write(post_text)
@@ -95,7 +95,7 @@ class DetikSpider(scrapy.Spider):
     scrapy.core.scraper.warn_on_generator_with_return_value = warn_on_generator_with_return_value_stub
 
 
-def main(output_path='/home/xuancong/web_crawl/data/social_media/id_detik/id_detik.jsonl'):
+def main(output_path='~/web_crawl/data/social_media/id_detik/id_detik.jsonl'):
 
     os.chdir(os.path.dirname(__file__))
 

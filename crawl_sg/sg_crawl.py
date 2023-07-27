@@ -41,7 +41,7 @@ def main():
 
     settings = {
         "FEEDS": {
-            '../data/massive_crawl/%(domain)s.jsonl': {
+            '~/web_crawl/data/massive_crawl/%(domain)s.jsonl': {
                 'format': 'jsonlines',
                 "overwrite": True,
                 "encoding": "utf8",

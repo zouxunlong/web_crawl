@@ -28,7 +28,7 @@ ITEM_PIPELINES = {
     "web_crawl.pipelines.ElasticSearchPipeline": 300,
 }
 
-LOG_FILE = f"/home/xuancong/web_crawl/data/{str(current_date)}.log"
+LOG_FILE = f"~/web_crawl/data/{str(current_date)}.log"
 LOG_LEVEL = "INFO"
 RETRY_ENABLED = True
 DOWNLOAD_TIMEOUT = 15

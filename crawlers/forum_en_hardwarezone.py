@@ -95,7 +95,7 @@ def main():
     process = CrawlerProcess(
         settings={
             "FEEDS": {
-                '/home/xuancong/web_crawl/data/social_media/%(name)s/%(name)s.jsonl': {
+                '~/web_crawl/data/social_media/%(name)s/%(name)s.jsonl': {
                     "format": "jsonlines",
                     "overwrite": True,
                     "encoding": "utf8",
