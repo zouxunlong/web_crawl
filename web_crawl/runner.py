@@ -4,8 +4,7 @@ from scrapy.utils.log import configure_logging, logger
 from twisted.internet import reactor
 from scrapy.utils.project import get_project_settings
 
-settings = get_project_settings()
-configure_logging(settings)
+
 
 def schedule_next_crawl(null):
     tomorrow = datetime.combine(date.today() + timedelta(1), time())
@@ -13,6 +12,9 @@ def schedule_next_crawl(null):
     reactor.callLater(sleep_time, crawl)
 
 def crawl():
+    
+    settings = get_project_settings()
+    configure_logging(settings)
     logger.info("crawl start once.............................")
 
     runner = CrawlerRunner(settings)
