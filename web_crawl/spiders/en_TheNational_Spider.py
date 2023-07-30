@@ -5,7 +5,6 @@ import scrapy
 class en_TheNational_Spider(scrapy.Spider):
     name = 'en_thenational'
     allowed_domains = ['thenational.scot']
-    start_urls = []
 
     def __init__(self, start_date, end_date):
         self.start_date = start_date
@@ -13,6 +12,7 @@ class en_TheNational_Spider(scrapy.Spider):
         self.start_time = datetime.combine(start_date, time())
         self.end_time = datetime.combine(end_date, time())
         self.base_url = 'https://www.thenational.scot/archive/'
+        self.start_urls=[]
         incremented_date = self.start_time
         while incremented_date < self.end_time:
             day = incremented_date.strftime('%Y/%m/%d')

@@ -5,13 +5,13 @@ import scrapy
 class id_KoranJakarta_Spider(scrapy.Spider):
     name = 'id_koranjakarta'
     allowed_domains = ['koran-jakarta.com']
-    start_urls = []
 
     def __init__(self, start_date, end_date):
         self.start_date = start_date
         self.end_date = end_date
         self.start_time = datetime.combine(start_date, time())
         self.end_time = datetime.combine(end_date, time())
+        self.start_urls=[]
         this_date = start_date
         while this_date < end_date:
             this_date_string = datetime.strftime(this_date, "%d+%B+%Y")

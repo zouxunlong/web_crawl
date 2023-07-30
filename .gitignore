@@ -2,4 +2,4 @@
 */__pycache__
 */*/__pycache__
 *.log
-*.pid
+nohup.out

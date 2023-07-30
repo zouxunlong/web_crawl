@@ -14,6 +14,7 @@ def schedule_next_crawl(null):
 def crawl():
     
     settings = get_project_settings()
+    settings.set('LOG_FILE', "./data/{}.log".format(str(date.today())))
     configure_logging(settings)
     logger.info("crawl start once.............................")
 

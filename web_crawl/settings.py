@@ -29,6 +29,7 @@ ITEM_PIPELINES = {
 }
 
 LOG_FILE = f"./data/{str(current_date)}.log"
+LOG_FILE_APPEND = False
 LOG_LEVEL = "INFO"
 RETRY_ENABLED = True
 DOWNLOAD_TIMEOUT = 15

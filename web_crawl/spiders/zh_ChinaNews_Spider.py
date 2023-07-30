@@ -5,17 +5,15 @@ from datetime import time, datetime, timedelta
 class zh_ChinaNews_Spider(scrapy.Spider):
     name = 'zh_Chinanews'
     allowed_domains = ['chinanews.com.cn']
-    start_urls = []
 
     def __init__(self, start_date, end_date):
         self.start_date = start_date
         self.end_date = end_date
         self.start_time = datetime.combine(start_date, time())
         self.end_time = datetime.combine(end_date, time())
-
+        self.start_urls=[]
         date = self.start_time
         date_str = datetime.strftime(date, '%Y/%m%d')
-
         while date < self.end_time:
             self.start_urls.append(
                 f'https://www.chinanews.com.cn/scroll-news/{date_str}/news.shtml')

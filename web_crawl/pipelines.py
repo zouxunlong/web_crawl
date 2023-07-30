@@ -5,15 +5,16 @@
 
 
 # useful for handling different item types with a single interface
+from collections import defaultdict
 import html
 import itertools
-from itemadapter import ItemAdapter
 import re
 from simhash import Simhash
 from elasticsearch import Elasticsearch
 from scrapy.exceptions import DropItem
 from sentsplit.segment import SentSplit
 from thai_segmenter import sentence_segment
+from scrapy.utils.log import logger
 
 
 class ElasticSearchPipeline:
@@ -31,30 +32,31 @@ class ElasticSearchPipeline:
     pattern_vietnamese = r"[àáãạảăắằẳẵặâấầẩẫậèéẹẻẽêềếểễệđìíĩỉịòóõọỏôốồổỗộơớờởỡợùúũụủưứừửữựỳỵỷỹýÀÁÃẠẢĂẮẰẲẴẶÂẤẦẨẪẬÈÉẸẺẼÊỀẾỂỄỆĐÌÍĨỈỊÒÓÕỌỎÔỐỒỔỖỘƠỚỜỞỠỢÙÚŨỤỦƯỨỪỬỮỰỲỴỶỸÝ]"
     pattern_emoji = r'[\U0001F1E0-\U0001F1FF\U0001F300-\U0001F64F\U0001F680-\U0001FAFF\U00002702-\U000027B0]'
 
-    def __init__(self, ES_CONNECTION_STRING):
+    def __init__(self, ES_CONNECTION_STRING, stats):
         self.ES_CONNECTION_STRING = ES_CONNECTION_STRING
-        self.sentence_splitter_en = SentSplit(
-            'en', strip_spaces=True, maxcut=512)
-        self.sentence_splitter_zh = SentSplit(
-            'zh', strip_spaces=True, maxcut=150)
+        self.stats = stats
+        self.sentence_splitter_en = SentSplit('en', strip_spaces=True, maxcut=512)
+        self.sentence_splitter_zh = SentSplit('zh', strip_spaces=True, maxcut=150)
         self.sentence_splitter_th = sentence_segment
 
     @classmethod
     def from_crawler(cls, crawler):
         return cls(
             ES_CONNECTION_STRING=crawler.settings.get("ES_CONNECTION_STRING"),
+            stats=crawler.stats
         )
 
     def open_spider(self, spider):
-        spider.crawler.stats.set_value("spider_name", spider.name)
-        self.client = Elasticsearch(
-            self.ES_CONNECTION_STRING).options(ignore_status=400)
+        self.stats.set_value("spider_name", spider.name)
+        self.stats.set_value("es_status", defaultdict(lambda: [0, 0, 0]))
+        self.client = Elasticsearch(self.ES_CONNECTION_STRING).options(ignore_status=400)
 
     def close_spider(self, spider):
         self.client.close()
 
     def process_item(self, item, spider):
 
+        spider_name = spider.name
         language_type = spider.name[:2]
 
         item['text'] = self.unwanted_character_filtered(item['text'])
@@ -83,9 +85,14 @@ class ElasticSearchPipeline:
         }
 
         res = self.client.index(index=index, id=id, document=doc)
-        if res.meta.status not in [200, 201]:
-            print(res, flush=True)
+        if res['result'] in ['created']:
+            self.stats.get_value("es_status")[spider_name][0] += 1
+        elif res['result'] in ['updated']:
+            self.stats.get_value("es_status")[spider_name][1] += 1
+        else:
+            self.stats.get_value("es_status")[spider_name][2] += 1
 
+        logger.info(dict.__repr__(self.stats.get_value("es_status")))
         item['split_sentences']=self.sentence_split(item['language_type'], item['text'])
 
         return item

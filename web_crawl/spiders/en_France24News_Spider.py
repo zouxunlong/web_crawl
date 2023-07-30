@@ -5,13 +5,13 @@ from datetime import time, datetime, timedelta
 class en_France24News_Spider(scrapy.Spider):
     name = 'en_france24news'
     allowed_domains = ['france24.com']
-    start_urls = []
 
     def __init__(self, start_date, end_date):
         self.start_date = start_date
         self.end_date = end_date
         self.start_time = datetime.combine(start_date, time())
         self.end_time = datetime.combine(end_date, time())
+        self.start_urls=[]
         self.base_url = 'https://france24.com/en/archives/'
         incremented_date = self.start_time
         while incremented_date < self.end_time:
