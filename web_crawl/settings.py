@@ -7,7 +7,7 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 from datetime import date
-current_date=date.today()
+
 
 BOT_NAME = 'web_crawl'
 
@@ -28,7 +28,7 @@ ITEM_PIPELINES = {
     "web_crawl.pipelines.ElasticSearchPipeline": 300,
 }
 
-LOG_FILE = f"./data/{str(current_date)}.log"
+LOG_FILE = f"./data/{str(date.today())}.log"
 LOG_FILE_APPEND = False
 LOG_LEVEL = "INFO"
 RETRY_ENABLED = True
