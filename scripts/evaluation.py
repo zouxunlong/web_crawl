@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 from sentence_transformers import SentenceTransformer
 import torch
-torch.cuda.set_device(3)
+torch.cuda.set_device(1)
 
 model_sentence_transformers = SentenceTransformer('/home/xuanlong/dataclean/cleaning/model/labse_bert_model')
 
@@ -37,13 +37,13 @@ def evaluate(input_file, output_file):
 
 @ plac.pos('input_path', "Src File/dir", type=Path)
 @ plac.pos('output_path', "Tgt File/dir", type=Path)
-def main(input_path="/home/xuanlong/dataclean/data/stage4", output_path="/home/xuanlong/dataclean/data/stage5"):
+def main(input_path="/home/xuanlong/web_crawl/data/airflow_data/stage4", output_path="/home/xuanlong/web_crawl/data/airflow_data/stage5"):
 
     os.chdir(os.path.dirname(__file__))
     if os.path.isdir(input_path):
         for rootdir, dirs, files in os.walk(input_path):
             for file in files:
-                if not file.endswith('.json'):
+                if file.endswith('.zh2en'):
                     input_file = os.path.join(rootdir, file)
                     output_file = os.path.join(rootdir.replace(str(input_path), str(output_path)), file)
                     evaluate(input_file, output_file)
