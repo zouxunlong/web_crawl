@@ -46,7 +46,8 @@ def main(input_path="/home/xuanlong/web_crawl/data/airflow_data/stage4", output_
                 if file.endswith('.zh2en'):
                     input_file = os.path.join(rootdir, file)
                     output_file = os.path.join(rootdir.replace(str(input_path), str(output_path)), file)
-                    evaluate(input_file, output_file)
+                    if not os.path.exists(output_file):
+                        evaluate(input_file, output_file)
                     print("finished {}".format(input_file), flush=True)
 
 
