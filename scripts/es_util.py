@@ -2,11 +2,11 @@ import json
 import re
 from simhash import Simhash
 from elasticsearch import Elasticsearch
-from elasticsearch.helpers import parallel_bulk, bulk
+from elasticsearch.helpers import bulk
 import os
 
 
-ES_CONNECTION_STRING = "http://localhost:9200"
+ES_CONNECTION_STRING = "http://10.2.56.44:9200"
 es = Elasticsearch(ES_CONNECTION_STRING).options(ignore_status=400)
 
 
@@ -258,10 +258,13 @@ def transfer_hardwarezone_en(input_path, output_path):
 def put_bt_data(input_path):
     for rootdir, dirs, files in os.walk(input_path):
         source = rootdir.split("/")[-1]
+        source = source.split("_")[-1]+'_'+source.split("_")[0]
         files.sort(reverse=True)
         index = 'bt_data'
         for file in files:
             language_type = file.split('.')[-1]
+            if language_type not in ['zh2en']:
+                continue
             lang_src, lang_tgt = language_type.split('2')
             domain = 'news'
             input_file = os.path.join(rootdir, file)
@@ -295,14 +298,10 @@ def put_bt_data(input_path):
                     yield doc
 
 
-transfer_hardwarezone_en('/home/xuanlong/web_crawl/data/social_media/en_hardwarezone/en_hardwarezone.jsonl', '/home/xuanlong/web_crawl/data/social_media/en_hardwarezone/en_hardwarezone1.jsonl')
 
-# res = bulk(client=es,
-#            actions=put_forum_hardwarezone_en(
-#                "/home/xuancong/web_crawl/data/social_media/en_hardwarezone/en_hardwarezone.jsonl"),
-#            chunk_size=200,
-#            max_chunk_bytes=104857600
-#            )
+res = bulk(client=es,
+           actions=put_bt_data("/home/xuanlong/web_crawl/data/airflow_data/stage5"),
+           )
 
 # print(res, flush=True)
 
