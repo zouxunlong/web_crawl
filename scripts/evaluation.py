@@ -5,7 +5,7 @@ from sentence_transformers import SentenceTransformer
 import torch
 torch.cuda.set_device(1)
 
-model_sentence_transformers = SentenceTransformer('/home/xuanlong/dataclean/cleaning/model/labse_bert_model')
+model_sentence_transformers = SentenceTransformer('/home/xuanlong/web_crawl/model/labse_bert_model')
 
 def evaluate(input_file, output_file):
 
