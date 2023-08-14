@@ -83,7 +83,7 @@ class Back_translator:
                 batch_sentences_tgt = ""
                 s.sendall(bytes('\n'.join(batch_sentences_src)+'\n', encoding='utf8'))
                 while batch_sentences_tgt.count("\n") != len(batch_sentences_src):
-                    batch_sentences_tgt += s.recv(4096).decode('UTF-8')
+                    batch_sentences_tgt += s.recv(8192).decode('utf-8')
                 batch_sentences_tgt = batch_sentences_tgt.strip().split('\n')
                 sentences_tgt.extend(batch_sentences_tgt)
 
