@@ -39,6 +39,8 @@ def evaluate(input_file, output_file):
 @ plac.pos('output_path', "Tgt File/dir", type=Path)
 def main(input_path="/home/xuanlong/web_crawl/data/airflow_data/stage4", output_path="/home/xuanlong/web_crawl/data/airflow_data/stage5"):
 
+    print(os.getpid(), flush=True)
+
     os.chdir(os.path.dirname(__file__))
     if os.path.isdir(input_path):
         for rootdir, dirs, files in os.walk(input_path):

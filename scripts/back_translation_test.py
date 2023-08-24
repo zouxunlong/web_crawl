@@ -145,8 +145,7 @@ def main(src='th',
 
 
 if __name__ == "__main__":
-    plac.call(main)
-    # batch_sentences_tgt = translator.translate(["ชมผ่านยูทูปได้ที่: https://youtu.be/XQFuMwDFO48"], "th", "en")
+    batch_sentences_tgt = translator.translate(["ชมผ่านยูทูปได้ที่: https://youtu.be/XQFuMwDFO48"], "th", "en")
     # batch_sentences_tgt = translator.translate(["youtube : https://youtu.be/XQFuMwDFO48"], "en", "th")
-    print("finished all", flush=True)
 
+    print(batch_sentences_tgt, flush=True)

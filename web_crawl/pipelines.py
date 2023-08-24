@@ -143,6 +143,5 @@ class ElasticSearchPipeline:
         if language_type in {'zh'}:
             return list(itertools.chain.from_iterable(self.sentence_splitter_zh.segment(texts)))
         if language_type in {'th'}:
-            sentences_list = [[str(sentence) for sentence in self.sentence_splitter_th.segment(
-                text.strip())] for text in texts]
+            sentences_list = [[str(sentence) for sentence in self.sentence_splitter_th.segment(text.strip())] for text in texts]
             return list(itertools.chain.from_iterable(sentences_list))

@@ -16,9 +16,9 @@ class en_KoreaHerald_Spider(scrapy.Spider):
         self.page = 1
 
     def parse(self, response):
-        articles = response.xpath('//div[@class="main_sec"]//li')
+        articles = response.xpath('//ul[@class="category_detail_list"]//li')
         for article in articles:
-            date_time_str = articles[-1].xpath('.//span/text()').get()
+            date_time_str = article.xpath('.//p[@class="date"]/text()').get()
             date_time = datetime.strptime(date_time_str, "%b %d, %Y")
             if date_time < self.start_time:
                 return
@@ -26,9 +26,9 @@ class en_KoreaHerald_Spider(scrapy.Spider):
                 continue
 
             date = str(date_time.date())
-            title = article.xpath('.//div[@class="main_l_t1"]/text()').get()
+            title = article.xpath('.//strong[@class="ellipsis"]/text()').get()
             url = article.xpath('./a/@href').get()
-            
+
             yield response.follow(url=url,
                                     callback=self.parse_article,
                                     cb_kwargs={"date": date, "title": title})
@@ -36,13 +36,13 @@ class en_KoreaHerald_Spider(scrapy.Spider):
         self.page += 1
         next_page_link = self.base_url + str(self.page)
         if next_page_link:
-            yield scrapy.Request(response.urljoin(next_page_link), callback=self.parse)
+            yield scrapy.Request(url=next_page_link, callback=self.parse)
 
     def parse_article(self, response, *args, **kwargs):
 
         date = kwargs["date"]
         title = kwargs["title"]
-        text_nodes = response.xpath('//div[@class="view_con_t"]/p')
+        text_nodes = response.xpath('//div[@class="text_box"]/p')
         texts=[''.join(text_node.xpath(".//text()").getall()).replace('\n', " ") for text_node in text_nodes if not text_node.xpath('.//script')]
         text = "\n".join([t.strip() for t in texts if t.strip()]).replace(u'\xa0', " ").replace(u'\u3000', " ")
         if text and title:
