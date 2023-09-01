@@ -49,7 +49,9 @@ class ElasticSearchPipeline:
     def open_spider(self, spider):
         self.stats.set_value("spider_name", spider.name)
         self.stats.set_value("es_status", defaultdict(lambda: [0, 0, 0]))
-        self.client = Elasticsearch(self.ES_CONNECTION_STRING).options(ignore_status=400)
+        self.client = Elasticsearch(hosts=self.ES_CONNECTION_STRING, http_auth=(
+    'elastic', 'elastic_pw')).options(ignore_status=400, request_timeout=30)
+
 
     def close_spider(self, spider):
         self.client.close()

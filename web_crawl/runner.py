@@ -3,7 +3,7 @@ from scrapy.crawler import CrawlerRunner
 from scrapy.utils.log import configure_logging, logger
 from twisted.internet import reactor
 from scrapy.utils.project import get_project_settings
-
+import os
 
 
 def schedule_next_crawl(null):
@@ -65,6 +65,7 @@ def crawl():
 
 
 if __name__ == "__main__":
+    print(os.getpid(), flush=True)
     crawl()
     reactor.run()
     print("finished all", flush=True)
