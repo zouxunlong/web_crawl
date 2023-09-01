@@ -11,8 +11,8 @@ class Back_translator:
 
     def __init__(self,
                  batch_size=50,
-                 en2th_api='http://10.2.56.41:5001/en2th',
-                 th2en_api='http://10.2.56.41:5001/th2en',
+                 en2th_api='http://10.2.56.190:5001/en2th',
+                 th2en_api='http://10.2.56.190:5001/th2en',
                  sgtt_api='http://10.2.56.190:5008/translator',
                  en2vi_port=25602,
                  vi2en_port=25603,
@@ -116,11 +116,9 @@ def translation(input_file, output_file, src, tgt):
 @ plac.pos('input_path', "Src File/dir", type=Path)
 def main(src='th',
          tgt='en',
-         worker=4,
+         worker=1,
          input_dir="/home/xuanlong/web_crawl/data/news_article",
          ):
-    
-    print(os.getpid(), flush=True)
 
     os.chdir(os.path.dirname(__file__))
 
@@ -145,8 +143,7 @@ def main(src='th',
 
 
 if __name__ == "__main__":
+    print(os.getpid(), flush=True)
     plac.call(main)
-    # batch_sentences_tgt = translator.translate(["ชมผ่านยูทูปได้ที่: https://youtu.be/XQFuMwDFO48"], "th", "en")
-    # batch_sentences_tgt = translator.translate(["youtube : https://youtu.be/XQFuMwDFO48"], "en", "th")
     print("finished all", flush=True)
 

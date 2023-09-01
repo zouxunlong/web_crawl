@@ -11,8 +11,8 @@ class Back_translator:
 
     def __init__(self,
                  batch_size=50,
-                 en2th_api='http://10.2.56.41:5001/en2th',
-                 th2en_api='http://10.2.56.41:5001/th2en',
+                 en2th_api='http://10.2.56.190:5001/en2th',
+                 th2en_api='http://10.2.56.190:5001/th2en',
                  sgtt_api='http://10.2.56.190:5008/translator',
                  en2vi_port=25602,
                  vi2en_port=25603,
