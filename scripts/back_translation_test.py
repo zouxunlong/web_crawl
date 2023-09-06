@@ -145,7 +145,7 @@ def main(src='th',
 
 
 if __name__ == "__main__":
-    batch_sentences_tgt = translator.translate(["ชมผ่านยูทูปได้ที่: https://youtu.be/XQFuMwDFO48"], "th", "en")
+    batch_sentences_tgt = translator.translate(["แม่ขอโทษลูกด้วย"], "th", "en")
     # batch_sentences_tgt = translator.translate(["youtube : https://youtu.be/XQFuMwDFO48"], "en", "th")
 
     print(batch_sentences_tgt, flush=True)

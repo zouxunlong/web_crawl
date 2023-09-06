@@ -14,8 +14,13 @@ def evaluate(input_file, output_file):
         os.makedirs(output_file_dir)
 
     sentences_src_tgt = [line.strip().split(' ||| ') for line in open(input_file, encoding='utf8').readlines()]
-    sentences_src = [src_tgt[0] for src_tgt in sentences_src_tgt]
-    sentences_tgt = [src_tgt[1] for src_tgt in sentences_src_tgt]
+    sentences_src = []
+    sentences_tgt = []
+    for src_tgt in sentences_src_tgt:
+        if len(src_tgt)==2:
+            sentences_src.append(src_tgt[0])
+            sentences_tgt.append(src_tgt[1])
+
 
     source_embedding = model_sentence_transformers.encode(
         sentences_src, show_progress_bar=False, convert_to_numpy=True, normalize_embeddings=True)
@@ -37,23 +42,22 @@ def evaluate(input_file, output_file):
 
 @ plac.pos('input_path', "Src File/dir", type=Path)
 @ plac.pos('output_path', "Tgt File/dir", type=Path)
-def main(input_path="/home/xuanlong/web_crawl/data/airflow_data/stage4", output_path="/home/xuanlong/web_crawl/data/airflow_data/stage5"):
-
-    print(os.getpid(), flush=True)
+def main(input_path="/home/xuanlong/web_crawl/data/news_article"):
 
     os.chdir(os.path.dirname(__file__))
     if os.path.isdir(input_path):
         for rootdir, dirs, files in os.walk(input_path):
             for file in files:
-                if file.endswith('.zh2en'):
+                if file.split(".")[-1] in {'th2en'}:
                     input_file = os.path.join(rootdir, file)
-                    output_file = os.path.join(rootdir.replace(str(input_path), str(output_path)), file)
+                    output_file = os.path.join(rootdir, file.replace(".th2en", ".eval.th2en"))
                     if not os.path.exists(output_file):
                         evaluate(input_file, output_file)
                     print("finished {}".format(input_file), flush=True)
 
 
 if __name__ == "__main__":
+    print(os.getpid(), flush=True)
     plac.call(main)
     print("finished all.", flush=True)
 

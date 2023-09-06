@@ -7,7 +7,8 @@ import os
 
 
 ES_CONNECTION_STRING = "http://10.2.56.44:9200"
-es = Elasticsearch(ES_CONNECTION_STRING).options(ignore_status=400)
+es = Elasticsearch(hosts=ES_CONNECTION_STRING, http_auth=(
+    'elastic', 'elastic_pw')).options(ignore_status=400, request_timeout=30)
 
 
 class Reg_Exp:
@@ -258,12 +259,13 @@ def transfer_hardwarezone_en(input_path, output_path):
 def put_bt_data(input_path):
     for rootdir, dirs, files in os.walk(input_path):
         source = rootdir.split("/")[-1]
-        source = source.split("_")[-1]+'_'+source.split("_")[0]
         files.sort(reverse=True)
         index = 'bt_data'
         for file in files:
+            if len(file.split('.'))!=3:
+                continue
             language_type = file.split('.')[-1]
-            if language_type not in ['zh2en']:
+            if language_type not in ['th2en']:
                 continue
             lang_src, lang_tgt = language_type.split('2')
             domain = 'news'
@@ -300,7 +302,7 @@ def put_bt_data(input_path):
 
 
 res = bulk(client=es,
-           actions=put_bt_data("/home/xuanlong/web_crawl/data/airflow_data/stage5"),
+           actions=put_bt_data("/home/xuanlong/web_crawl/data/news_article"),
            )
 
 # print(res, flush=True)
