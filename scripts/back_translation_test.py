@@ -145,7 +145,11 @@ def main(src='th',
 
 
 if __name__ == "__main__":
-    batch_sentences_tgt = translator.translate(["แม่ขอโทษลูกด้วย"], "th", "en")
-    # batch_sentences_tgt = translator.translate(["youtube : https://youtu.be/XQFuMwDFO48"], "en", "th")
+    # batch_sentences_tgt = translator.translate(["แม่ขอโทษลูกด้วย"], "th", "en")
+    # print(translator.translate(["youtube : https://youtu.be/XQFuMwDFO48"], "en", "ta"), flush=True)
+    # print(translator.translate(["how are you?"], "en", "zh"), flush=True)
+    # print(translator.translate(["how are you?"], "en", "ms"), flush=True)
+    # print(translator.translate(["பேஸ்புக்கில் சிறுகதை ஒன்றை பதிவிட்டதன் மூலம் பௌத்த பிக்குமாரை தனது எழுத்துக்களால் விமர்சித்தாரென சிவில் மற்றும் அரசியல் உரிமைகள் பற்றிய ஐ.நா. ஆதரவு சர்வதேச உடன்படிக்கையின் (ICCPR) கீழ் ஏப்ரல் மாதம் முதலாம் திகதி அவர் கைதுசெய்யப்பட்டார்."], "ta", "en"), flush=True)
+    # print(translator.translate(["你好吗？"], "zh", "en"), flush=True)
+    print(translator.translate(["Sebanyak 94.6 peratus jumlah perdagangan dihantar melalui pengangkutan laut. Ini diikuti oleh pengangkutan udara (3.6%) dan melalui darat (1.8%)."], "ms", "en"), flush=True)
 
-    print(batch_sentences_tgt, flush=True)
