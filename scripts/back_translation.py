@@ -1,10 +1,8 @@
 import itertools
 import json
 import os
-from pathlib import Path
 import socket
 import requests
-import plac
 from concurrent.futures import ThreadPoolExecutor
 
 class Back_translator:
@@ -107,16 +105,12 @@ def translation(input_file, output_file, src, tgt):
                 assert len(batch_sentences_tgt) == len(batch_sentences_src), 'length of src and target do not match'
                 for i in range(len(batch_sentences_src)):
                     f_out.write("{} ||| {}\n".format(batch_sentences_src[i].replace("|", " "), batch_sentences_tgt[i].replace("|", " ")))
-    print('finished {}'.format(input_file), flush=True)
+    print('finished {}'.format(output_file), flush=True)
 
 
-@ plac.pos('src', "source language", type=str)
-@ plac.pos('tgt', "target language", type=str)
-@ plac.pos('worker', "worker number", type=int)
-@ plac.pos('input_path', "Src File/dir", type=Path)
-def main(src='th',
-         tgt='en',
-         worker=1,
+def main(srcs=['zh', 'ms', 'ta'],
+         tgts=['en'],
+         worker=4,
          input_dir="/home/xuanlong/web_crawl/data/news_article",
          ):
 
@@ -125,25 +119,24 @@ def main(src='th',
     with ThreadPoolExecutor(max_workers=worker) as pool:
 
         for rootdir, dirs, files in os.walk(input_dir):
-
             src_lang = os.path.basename(rootdir)[:2]
-            if src_lang not in [src]:
+            if src_lang not in srcs:
                 continue
             files.sort(reverse=True)
 
             for file in files:
 
                 input_file = os.path.join(rootdir, file)
-                output_file = os.path.join(rootdir, file.replace('jsonl', src+'2'+tgt))
-                pool.submit(translation, input_file, output_file, src, tgt)
-
-                print('task for {} submitted.....'.format(input_file), flush=True)
+                for tgt in tgts:
+                    output_file = os.path.join(rootdir, file.replace('jsonl', src_lang+'2'+tgt))
+                    pool.submit(translation, input_file, output_file, src_lang, tgt)
+                    print('task for {} submitted.....'.format(output_file), flush=True)
 
     print('ThreadPool closed.....', flush=True)
 
 
 if __name__ == "__main__":
     print(os.getpid(), flush=True)
-    plac.call(main)
+    main()
     print("finished all", flush=True)
 
