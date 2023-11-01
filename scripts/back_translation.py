@@ -1,4 +1,3 @@
-import itertools
 import json
 import os
 import socket
@@ -91,47 +90,43 @@ class Back_translator:
         if (src, tgt) in [('en', 'zh'), ('zh', 'en'), ('en', 'ms'), ('ms', 'en'), ('en', 'ta'), ('ta', 'en')]:
             return self.translate_sgtt(sentences_src, src, tgt)
 
-
 translator = Back_translator()
 
+def translation(input_file, output_file, src_lang, tgt_lang):
 
-def translation(input_file, output_file, src, tgt):
-    sentences_src = list(itertools.chain.from_iterable([json.loads(line)['split_sentences'] for line in open(input_file, encoding="utf8").readlines()]))
-    if not os.path.exists(output_file):
-        with open(output_file, "w", encoding="utf8") as f_out:
-            for i in range(0, len(sentences_src), 10000):
-                batch_sentences_src = sentences_src[i:i+10000]
-                batch_sentences_tgt = translator.translate(batch_sentences_src, src, tgt)
-                assert len(batch_sentences_tgt) == len(batch_sentences_src), 'length of src and target do not match'
-                for i in range(len(batch_sentences_src)):
-                    f_out.write("{} ||| {}\n".format(batch_sentences_src[i].replace("|", " "), batch_sentences_tgt[i].replace("|", " ")))
+    with open(input_file, encoding="utf8") as f_in, \
+        open(output_file, "w", encoding="utf8") as f_out:
+        for line in f_in:
+            item=json.loads(line)
+            sentences_tgt = translator.translate(item['split_sentences'], src_lang, tgt_lang)
+            assert len(item['split_sentences']) == len(sentences_tgt), 'length of source and target do not match'
+            f_out.write(json.dumps({'split_sentences_'+tgt_lang: sentences_tgt}, ensure_ascii=False)+'\n')
     print('finished {}'.format(output_file), flush=True)
 
 
-def main(srcs=['zh', 'ms', 'ta'],
-         tgts=['en'],
-         worker=4,
+def main(srcs=['en'],
+         tgts=['zh', 'ms', 'ta'],
+         worker=6,
          input_dir="/home/xuanlong/web_crawl/data/news_article",
          ):
 
     os.chdir(os.path.dirname(__file__))
 
     with ThreadPoolExecutor(max_workers=worker) as pool:
-
         for rootdir, dirs, files in os.walk(input_dir):
             src_lang = os.path.basename(rootdir)[:2]
             if src_lang not in srcs:
                 continue
             files.sort(reverse=True)
-
             for file in files:
-
+                if not file.endswith(".jsonl"):
+                    continue
                 input_file = os.path.join(rootdir, file)
-                for tgt in tgts:
-                    output_file = os.path.join(rootdir, file.replace('jsonl', src_lang+'2'+tgt))
-                    pool.submit(translation, input_file, output_file, src_lang, tgt)
+                for tgt_lang in tgts:
+                    output_file = os.path.join(rootdir, file.replace('.jsonl', '.'+tgt_lang+'.jsonl'))
+                    if not os.path.exists(output_file):
+                        pool.submit(translation, input_file, output_file, src_lang, tgt_lang)
                     print('task for {} submitted.....'.format(output_file), flush=True)
-
     print('ThreadPool closed.....', flush=True)
 
 

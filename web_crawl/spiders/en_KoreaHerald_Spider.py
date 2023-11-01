@@ -19,7 +19,7 @@ class en_KoreaHerald_Spider(scrapy.Spider):
         articles = response.xpath('//ul[@class="category_detail_list"]//li')
         for article in articles:
             date_time_str = article.xpath('.//p[@class="date"]/text()').get()
-            date_time = datetime.strptime(date_time_str, "%b %d, %Y")
+            date_time = datetime.strptime(date_time_str, "%b. %d, %Y")
             if date_time < self.start_time:
                 return
             elif date_time >= self.end_time:
