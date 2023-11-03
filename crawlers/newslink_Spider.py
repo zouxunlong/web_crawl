@@ -45,6 +45,7 @@ def main():
                     "encoding": "utf8",
                 },
             },
+            "AUTOTHROTTLE_ENABLED" : True,
             "LOG_LEVEL": "INFO",
             "USER_AGENT": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.76",
         }

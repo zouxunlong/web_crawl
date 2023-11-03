@@ -1,9 +1,12 @@
 
 
 
-list=open("/home/xuanlong/web_crawl/documentIds.txt").readlines()
+documentIds=open("/home/xuanlong/web_crawl/documentIds.txt").readlines()
+used_documentIds=open("/home/xuanlong/web_crawl/used_documentIds.txt").readlines()
 
-list.sort()
-with open(file="/home/xuanlong/web_crawl/documentIds_sorted.txt", mode="w", encoding="utf8") as file:
-    for line in list:
-        file.write(line)
+set1 = set(documentIds)
+set2 = set(used_documentIds)
+res = list(set1 - set2)
+
+open(file="/home/xuanlong/web_crawl/documentIds_remain0.txt",mode="w",encoding="utf8").write("".join(res))
+
