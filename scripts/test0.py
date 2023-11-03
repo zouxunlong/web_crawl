@@ -8,5 +8,5 @@ set1 = set(documentIds)
 set2 = set(used_documentIds)
 res = list(set1 - set2)
 
-open(file="/home/xuanlong/web_crawl/documentIds_remain0.txt",mode="w",encoding="utf8").write("".join(res))
+open(file="/home/xuanlong/web_crawl/documentIds_remain.txt",mode="w",encoding="utf8").write("".join(res))
 
