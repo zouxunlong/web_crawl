@@ -302,19 +302,19 @@ def put_bt_data(input_path):
 
 def put_newslink(input_path):
 
+    ids=open("/home/xuanlong/web_crawl/documentIds_used1.txt").readlines()
+    ids=[item.strip() for item in ids]
+
     with open(input_path) as file_in:
         for i, line in enumerate(file_in):
-            if i<1165389:
+            if i<1259493:
                 continue
             if i%20000==0:
                 print(i, flush=True)
-            try:
-                item = json.loads(line)
-                text=item['bodyarticle'].replace("<br/>","\n").strip()
-            except Exception as e:
-                print(i,flush=True)
-                print(e,flush=True)
+            item = json.loads(line)
+            if item['documentid'] not in ids:
                 continue
+            text=item['bodyarticle'].replace("<br/>","\n").strip()
             if text:
                 doc = {
                     '_index': "newslink",
@@ -324,26 +324,14 @@ def put_newslink(input_path):
                     'language_type': "en",
                     'date': item['processingtime'][:10]
                 }
-
                 yield doc
+    print(i, flush=True)
 
 
 
 
 res = bulk(client=es,
            actions=put_newslink("/home/xuanlong/web_crawl/data/newslink/ST.jsonl"),
-           chunk_size=200
+           chunk_size=1
            )
 print(res, flush=True)
-
-# transfer_kaskus_id("/home/xuancong/airflow/data/id_kaskus")
-# print('finished all', flush=True)
-
-# doc = {
-#     'author': 'author_name',
-#     'text': 'Interesting content...',
-# }
-# res = es.index(index="python_es01", id="1", document=doc)
-# if res.meta.status!=200:
-#     print(res)
-

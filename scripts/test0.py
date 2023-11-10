@@ -1,8 +1,8 @@
 
 
-documentIds_remain = open("/home/xuanlong/web_crawl/documentIds_remain.txt").readlines()
-documentIds_used1 = open("/home/xuanlong/web_crawl/documentIds_used1.txt").readlines()
-documentIds_remain=set(documentIds_remain)-set(documentIds_used1)
+documentIds = open("/home/xuanlong/web_crawl/documentIds.txt").readlines()
+documentIds_used = open("/home/xuanlong/web_crawl/documentIds_used.txt").readlines()
+documentIds_remain=set(documentIds)-set(documentIds_used)
 documentIds_remain=sorted(documentIds_remain, reverse=True)
 
 
