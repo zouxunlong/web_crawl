@@ -4,6 +4,7 @@ import socket
 import requests
 from concurrent.futures import ThreadPoolExecutor
 
+
 class Back_translator:
 
     def __init__(self,
@@ -26,9 +27,9 @@ class Back_translator:
                      'ta2en': sgtt_api,
                      }
         self.ports = {
-                      'en2vi': en2vi_port,
-                      'vi2en': vi2en_port,
-                      }
+            'en2vi': en2vi_port,
+            'vi2en': vi2en_port,
+        }
         self.host = host
 
     def translate_th(self, sentences_src, src, tgt):
@@ -38,23 +39,26 @@ class Back_translator:
 
         for i in range(0, len(sentences_src), self.batch_size):
             batch_sentences_src = sentences_src[i:i+self.batch_size]
-            response = requests.post(url, json={'text': '\n'.join(batch_sentences_src)})
+            response = requests.post(
+                url, json={'text': '\n'.join(batch_sentences_src)})
             sentences_tgt.extend(response.json()['translations'])
-        assert len(sentences_src) == len(sentences_tgt), 'length of src and target do not match'
+        assert len(sentences_src) == len(
+            sentences_tgt), 'length of src and target do not match'
 
         return sentences_tgt
 
     def translate_sgtt(self, sentences_src, src, tgt):
         url = self.urls[src+'2'+tgt]
         sentences_tgt = []
-        source=src+"_SG"
-        target=tgt+"_SG"
+        source = src+"_SG"
+        target = tgt+"_SG"
 
         for i in range(0, len(sentences_src), self.batch_size):
             batch_sentences_src = sentences_src[i:i+self.batch_size]
             response = requests.post(
-                url, json={"source":source, "target":target,"query": '\n'.join(batch_sentences_src)})
-            batch_sentences_tgt=[item["translatedText"] for item in response.json()["data"]["translations"]]
+                url, json={"source": source, "target": target, "query": '\n'.join(batch_sentences_src)})
+            batch_sentences_tgt = [item["translatedText"]
+                                   for item in response.json()["data"]["translations"]]
             sentences_tgt.extend(batch_sentences_tgt)
 
         assert len(sentences_src) == len(
@@ -73,13 +77,15 @@ class Back_translator:
             for i in range(0, len(sentences_src), self.batch_size):
                 batch_sentences_src = sentences_src[i:i+self.batch_size]
                 batch_sentences_tgt = ""
-                s.sendall(bytes('\n'.join(batch_sentences_src)+'\n', encoding='utf8'))
+                s.sendall(
+                    bytes('\n'.join(batch_sentences_src)+'\n', encoding='utf8'))
                 while batch_sentences_tgt.count("\n") != len(batch_sentences_src):
                     batch_sentences_tgt += s.recv(8192).decode('utf-8')
                 batch_sentences_tgt = batch_sentences_tgt.strip().split('\n')
                 sentences_tgt.extend(batch_sentences_tgt)
 
-        assert len(sentences_src) == len(sentences_tgt), 'length of src and target do not match'
+        assert len(sentences_src) == len(
+            sentences_tgt), 'length of src and target do not match'
         return sentences_tgt
 
     def translate(self, sentences_src, src, tgt):
@@ -90,24 +96,29 @@ class Back_translator:
         if (src, tgt) in [('en', 'zh'), ('zh', 'en'), ('en', 'ms'), ('ms', 'en'), ('en', 'ta'), ('ta', 'en')]:
             return self.translate_sgtt(sentences_src, src, tgt)
 
+
 translator = Back_translator()
+
 
 def translation(input_file, output_file, src_lang, tgt_lang):
 
     with open(input_file, encoding="utf8") as f_in, \
-        open(output_file, "w", encoding="utf8") as f_out:
+            open(output_file, "w", encoding="utf8") as f_out:
         for line in f_in:
-            item=json.loads(line)
-            sentences_tgt = translator.translate(item['split_sentences'], src_lang, tgt_lang)
-            assert len(item['split_sentences']) == len(sentences_tgt), 'length of source and target do not match'
-            f_out.write(json.dumps({'split_sentences_'+tgt_lang: sentences_tgt}, ensure_ascii=False)+'\n')
+            item = json.loads(line)
+            sentences_tgt = translator.translate(
+                item['split_sentences'], src_lang, tgt_lang)
+            assert len(item['split_sentences']) == len(
+                sentences_tgt), 'length of source and target do not match'
+            f_out.write(json.dumps(
+                {'split_sentences_'+tgt_lang: sentences_tgt}, ensure_ascii=False)+'\n')
     print('finished {}'.format(output_file), flush=True)
 
 
-def main(srcs=['en'],
-         tgts=['zh', 'ms', 'ta'],
-         worker=6,
-         input_dir="/home/xuanlong/web_crawl/data/news_article",
+def main(srcs,
+         tgts,
+         worker,
+         input_dir,
          ):
 
     os.chdir(os.path.dirname(__file__))
@@ -123,15 +134,21 @@ def main(srcs=['en'],
                     continue
                 input_file = os.path.join(rootdir, file)
                 for tgt_lang in tgts:
-                    output_file = os.path.join(rootdir, file.replace('.jsonl', '.'+tgt_lang+'.jsonl'))
+                    output_file = os.path.join(
+                        rootdir, file.replace('.jsonl', '.'+tgt_lang+'.jsonl'))
                     if not os.path.exists(output_file):
-                        pool.submit(translation, input_file, output_file, src_lang, tgt_lang)
-                    print('task for {} submitted.....'.format(output_file), flush=True)
+                        pool.submit(translation, input_file,
+                                    output_file, src_lang, tgt_lang)
+                    print('task for {} submitted.....'.format(
+                        output_file), flush=True)
     print('ThreadPool closed.....', flush=True)
 
 
 if __name__ == "__main__":
     print(os.getpid(), flush=True)
-    main()
+    main(srcs=['en'],
+         tgts=['zh', 'ms', 'ta'],
+         worker=6,
+         input_dir="/home/xuanlong/web_crawl/data/news_article",
+         )
     print("finished all", flush=True)
-

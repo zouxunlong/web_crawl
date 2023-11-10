@@ -300,12 +300,41 @@ def put_bt_data(input_path):
                     yield doc
 
 
+def put_newslink(input_path):
+
+    with open(input_path) as file_in:
+        for i, line in enumerate(file_in):
+            if i<1165389:
+                continue
+            if i%20000==0:
+                print(i, flush=True)
+            try:
+                item = json.loads(line)
+                text=item['bodyarticle'].replace("<br/>","\n").strip()
+            except Exception as e:
+                print(i,flush=True)
+                print(e,flush=True)
+                continue
+            if text:
+                doc = {
+                    '_index': "newslink",
+                    '_id': item['documentid'],
+                    'text': text,
+                    'source': "en_straitstimes",
+                    'language_type': "en",
+                    'date': item['processingtime'][:10]
+                }
+
+                yield doc
+
+
+
 
 res = bulk(client=es,
-           actions=put_bt_data("/home/xuanlong/web_crawl/data/news_article"),
+           actions=put_newslink("/home/xuanlong/web_crawl/data/newslink/ST.jsonl"),
+           chunk_size=200
            )
-
-# print(res, flush=True)
+print(res, flush=True)
 
 # transfer_kaskus_id("/home/xuancong/airflow/data/id_kaskus")
 # print('finished all', flush=True)
@@ -317,3 +346,4 @@ res = bulk(client=es,
 # res = es.index(index="python_es01", id="1", document=doc)
 # if res.meta.status!=200:
 #     print(res)
+

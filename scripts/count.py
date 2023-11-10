@@ -1,5 +1,5 @@
 
 
 
-documents=open("/home/xuanlong/web_crawl/documentIds_remain.txt").readlines()
+documents=open("/home/xuanlong/web_crawl/data/newslink/ST.jsonl").readlines()
 print(len(documents))
