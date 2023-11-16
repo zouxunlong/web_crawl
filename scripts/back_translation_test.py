@@ -146,10 +146,10 @@ def main(src='th',
 
 if __name__ == "__main__":
     # batch_sentences_tgt = translator.translate(["แม่ขอโทษลูกด้วย"], "th", "en")
-    print(translator.translate(["this is testing & this is another testing."], "en", "zh"), flush=True)
+    # print(translator.translate(["this is testing & this is another testing."], "en", "zh"), flush=True)
     # print(translator.translate(["how are you? https://youtu.be/XQFuMwDFO48"], "en", "zh"), flush=True)
     # print(translator.translate(["how are you? https://youtu.be/XQFuMwDFO48"], "en", "ms"), flush=True)
     # print(translator.translate(["பேஸ்புக்கில் சிறுகதை ஒன்றை பதிவிட்டதன் மூலம் பௌத்த பிக்குமாரை தனது எழுத்துக்களால் விமர்சித்தாரென சிவில் மற்றும் அரசியல் உரிமைகள் பற்றிய ஐ.நா. ஆதரவு சர்வதேச உடன்படிக்கையின் (ICCPR) கீழ் ஏப்ரல் மாதம் முதலாம் திகதி அவர் கைதுசெய்யப்பட்டார்."], "ta", "en"), flush=True)
     # print(translator.translate(["你好吗？"], "zh", "en"), flush=True)
-    # print(translator.translate(["Sebanyak 94.6 peratus jumlah perdagangan dihantar melalui pengangkutan laut. Ini diikuti oleh pengangkutan udara (3.6%) dan melalui darat (1.8%)."], "ms", "en"), flush=True)
+    print(translator.translate(["Sebanyak 94.6 peratus jumlah perdagangan dihantar melalui pengangkutan laut. Ini diikuti oleh pengangkutan udara (3.6%) dan melalui darat (1.8%)."], "ms", "en"), flush=True)
 

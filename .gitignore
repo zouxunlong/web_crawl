@@ -3,4 +3,5 @@
 */__pycache__
 */*/__pycache__
 *.log
+documentIds_BT_used.txt
 nohup.out

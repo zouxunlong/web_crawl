@@ -13,10 +13,10 @@ class newslink_Spider(scrapy.Spider):
     article_api = "https://api.newslink.sg/user/api/user/v1/download"
 
     def __init__(self):
-        self.documentIds = open(file="documentIds_remain.txt").readlines()
+        self.documentIds = open(file="documentIds_BT.txt").readlines()
         self.cookies = {
-            "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsic2VhcmNoIiwidXNlciIsImluZm8iXSwidXNlcl9uYW1lIjoiaTJyYXN0YXIiLCJzY29wZSI6WyJSRUFEIiwiV1JJVEUiXSwiZXhwIjoxNjk5NTM4NjM4LCJhdXRob3JpdGllcyI6WyJVU0VSIl0sImp0aSI6Im95WTJlcWVsSmhrNmRCNEVrdHVpZ2o4TzZ1dyIsImNsaWVudF9pZCI6Im5ld3NsaW5rX3dlYiJ9.mgg9vnK4KHoGDSSJh0ldDiaaY7Tp_iFCCD6RXnSpXHA",
-            "id_token": "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJiNTI1ODA3MC03OGE1LTRkM2YtYjQ2Mi1hZGQ0MmM0OGMxNWEiLCJpYXQiOjE2OTk1MzE0MzgsInN1YiI6ImkycmFzdGFyIiwidXNlcl9pbmZvIjp7InNlYXJjaF9wcm9maWxlX2luZm8iOiJnZW5lcmFsc2VhcmNoZW58cHJvZmlsZXwxIiwiaGlkZV9wYW5lbCI6ZmFsc2UsInVzZXJfdHlwZSI6ImdvdmVybm1lbnQiLCJoaWdobGlnaHRfdGV4dCI6dHJ1ZSwicHViX2xpc3QiOltdLCJ2aXNpdG9yX2lkIjoiNFVjampISjBDR0lnQzExS1BvRHpjZ1VrOTE0Q0NteEdEQkpmNTJsamU5Yz0iLCJpc19zZWFtbGVzcyI6ZmFsc2UsImNvbnRlbnRfYWxsb3dlZCI6IkFydGljbGVzLEltYWdlcyxQREYsT25saW5lLEFOTixNYWdhemluZSIsInNlYXJjaF90eXBlIjoiZ2VuZXJhbF9zZWFyY2gsIiwic2VhcmNoX2xhbmciOiJlbiIsImhpZGVfbGlua3MiOmZhbHNlLCJwYXlfYWxlcnQiOmZhbHNlfSwiaXNzIjoiTkVXU0xJTksiLCJleHAiOjE2OTk1Mzg2Mzd9.DGM8cdRcQsGYhpowh1Bz8XhHHO-ScfPdrQpfTueoHyI",
+            "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsic2VhcmNoIiwidXNlciIsImluZm8iXSwidXNlcl9uYW1lIjoiaTJyYXN0YXIiLCJzY29wZSI6WyJSRUFEIiwiV1JJVEUiXSwiZXhwIjoxNzAwMTIxNDE4LCJhdXRob3JpdGllcyI6WyJVU0VSIl0sImp0aSI6Ikg0dXpRZDZ5aDdDQnVNeVR1T19ZdGlDOGJQYyIsImNsaWVudF9pZCI6Im5ld3NsaW5rX3dlYiJ9.jLkriItU48Ei9x1TSYQYP5T92xjhUMOZg1Szvmu1nmc",
+            "id_token": "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJlZmJjODJjYS1jYzRmLTRhZjEtOGUxZS1lOGNjYzM3NmRhMjAiLCJpYXQiOjE3MDAxMTQyMTgsInN1YiI6ImkycmFzdGFyIiwidXNlcl9pbmZvIjp7InNlYXJjaF9wcm9maWxlX2luZm8iOiJnZW5lcmFsc2VhcmNoZW58cHJvZmlsZXwxIiwiaGlkZV9wYW5lbCI6ZmFsc2UsInVzZXJfdHlwZSI6ImdvdmVybm1lbnQiLCJoaWdobGlnaHRfdGV4dCI6dHJ1ZSwicHViX2xpc3QiOltdLCJ2aXNpdG9yX2lkIjoiNFVjampISjBDR0lnQzExS1BvRHpjZ1VrOTE0Q0NteEdEQkpmNTJsamU5Yz0iLCJpc19zZWFtbGVzcyI6ZmFsc2UsImNvbnRlbnRfYWxsb3dlZCI6IkFydGljbGVzLEltYWdlcyxQREYsT25saW5lLEFOTixNYWdhemluZSIsInNlYXJjaF90eXBlIjoiZ2VuZXJhbF9zZWFyY2gsIiwic2VhcmNoX2xhbmciOiJlbiIsImhpZGVfbGlua3MiOmZhbHNlLCJwYXlfYWxlcnQiOmZhbHNlfSwiaXNzIjoiTkVXU0xJTksiLCJleHAiOjE3MDAxMjE0MTd9.XcrVD7GZUvWFN-oNN8M7B6KtdSIpGSRglL2crRX8Qe0",
         }
 
     def start_requests(self):
@@ -35,15 +35,14 @@ class newslink_Spider(scrapy.Spider):
         data = json.loads(response.text)
         if "singleDocument" in data.keys() and data['singleDocument']:
             yield data['singleDocument']
-            open(file="documentIds_used1.txt", mode="a", encoding="utf8").write(data['singleDocument']['documentid']+'\n')
-
+            open(file="documentIds_BT_used.txt", mode="a", encoding="utf8").write(data['singleDocument']['documentid']+'\n')
 
 
 def main():
     process = CrawlerProcess(
         settings={
             "FEEDS": {
-                '/home/xuanlong/web_crawl/data/newslink/ST.jsonl': {
+                '/home/xuanlong/web_crawl/data/newslink/BT.jsonl': {
                     "format": "jsonlines",
                     "overwrite": False,
                     "encoding": "utf8",

@@ -134,20 +134,17 @@ def main(srcs,
                     continue
                 input_file = os.path.join(rootdir, file)
                 for tgt_lang in tgts:
-                    output_file = os.path.join(
-                        rootdir, file.replace('.jsonl', '.'+tgt_lang+'.jsonl'))
+                    output_file = os.path.join(rootdir, file.replace('.jsonl', '.'+tgt_lang+'.jsonl'))
                     if not os.path.exists(output_file):
-                        pool.submit(translation, input_file,
-                                    output_file, src_lang, tgt_lang)
-                    print('task for {} submitted.....'.format(
-                        output_file), flush=True)
+                        pool.submit(translation, input_file, output_file, src_lang, tgt_lang)
+                    print('task for {} submitted.....'.format(output_file), flush=True)
     print('ThreadPool closed.....', flush=True)
 
 
 if __name__ == "__main__":
     print(os.getpid(), flush=True)
-    main(srcs=['en'],
-         tgts=['zh', 'ms', 'ta'],
+    main(srcs=['zh', 'ms', 'ta'],
+         tgts=['en'],
          worker=6,
          input_dir="/home/xuanlong/web_crawl/data/news_article",
          )
