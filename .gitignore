@@ -3,6 +3,4 @@
 */__pycache__
 */*/__pycache__
 *.log
-documentIds_BT_used.txt
-documentIds_BT_rest.txt
-nohup.out
+*.txt

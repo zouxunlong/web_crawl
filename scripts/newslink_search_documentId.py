@@ -13,7 +13,7 @@ search_api = "https://api.newslink.sg/search/api/public/v1/searchsvc"
 documentIds = []
 
 
-def post(search_body):
+def post(search_body, file):
     response = requests.post(url=search_api, json=search_body)
     if response.status_code != 200:
         print(json.dumps(search_body), flush=True)
@@ -22,8 +22,8 @@ def post(search_body):
         if "content" in data.keys() and data['content']:
             new_ids = [item["documentid"] for item in data['content']]
             documentIds.extend(new_ids)
-            open(file="documentIds_BT.txt", mode="a", encoding="utf8").write('\n'.join(new_ids)+'\n')
-            print('date:{} add {} more'.format(search_body["dateRange"]["fromDate"], len(new_ids)), flush=True)
+            file.write('\n'.join(new_ids)+'\n')
+            print('date:{} add {} more, get {} in total.'.format(search_body["dateRange"]["fromDate"], len(new_ids), len(documentIds)), flush=True)
 
 # def main1():
     # with open("/home/xuanlong/web_crawl/search_documentId2.log") as file_in:
@@ -35,26 +35,26 @@ def post(search_body):
 
 
 def main():
-    for i in range(12372):
-        Date = str(date(1990,1,1)+timedelta(i))
-        search_body = {
-            "dateRange": {
-                "fromDate": Date,
-                "toDate": Date
-            },
-            "sortBy": "publicationdate",
-            "sortOrder": "asc",
-            "publication": [
-                "BT"
-            ],
-            "pageSize": 1000,
-            "sourceType": "article",
-            "digitalType": "article",
-            "pageNo": 1,
-            "company": [],
-            "section": []
-        }
-        post(search_body)
+    with open(file="documentIds.txt", mode="w", encoding="utf8") as file:
+        for i in range(12558):
+            Date = str(date(1989,7,1)+timedelta(i))
+            search_body = {
+                "dateRange": {
+                    "fromDate": Date,
+                    "toDate": Date
+                },
+                "sortBy": "publicationdate",
+                "sortOrder": "asc",
+                "publication": [
+                ],
+                "pageSize": 9999,
+                "sourceType": "article",
+                "digitalType": "article",
+                "pageNo": 1,
+                "company": [],
+                "section": []
+            }
+            post(search_body, file)
         
 
 
