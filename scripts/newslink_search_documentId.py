@@ -24,28 +24,36 @@ def post(search_body, file):
             documentIds.extend(new_ids)
             file.write('\n'.join(new_ids)+'\n')
             print('date:{} add {} more, get {} in total.'.format(search_body["dateRange"]["fromDate"], len(new_ids), len(documentIds)), flush=True)
+        else:
+            print('date:{} no content.'.format(search_body["dateRange"]["fromDate"]), flush=True)
 
-# def main1():
-    # with open("/home/xuanlong/web_crawl/search_documentId2.log") as file_in:
-    #     for i, line in enumerate(file_in):
-    #         if line.startswith("{"):
-    #             search_body = json.loads(line)
-    #             post(search_body, i)
-    # print('ThreadPool closed.....', flush=True)
+
+# def main():
+#     with open(file="documentIds.txt", mode="a", encoding="utf8") as file,\
+#      open("/home/xuanlong/web_crawl/documentIds.log") as file_in:
+#         for i, line in enumerate(file_in):
+#             if line.startswith("{"):
+#                 search_body = json.loads(line)
+#                 post(search_body, file)
+        
 
 
 def main():
-    with open(file="documentIds.txt", mode="w", encoding="utf8") as file:
-        for i in range(12558):
-            Date = str(date(1989,7,1)+timedelta(i))
+    with open(file="ME.txt", mode="w", encoding="utf8") as file:
+        for i in range(15):
+            # fromDate = str(date(1989,7,1)+timedelta(i))
+            # toDate = str(date(1989,7,1)+timedelta(i))
+            fromDate = str(date(2008+i,1,1))
+            toDate = str(date(2008+i+1,1,1)+timedelta(i))
             search_body = {
                 "dateRange": {
-                    "fromDate": Date,
-                    "toDate": Date
+                    "fromDate": fromDate,
+                    "toDate": toDate
                 },
                 "sortBy": "publicationdate",
                 "sortOrder": "asc",
                 "publication": [
+                    "ME"
                 ],
                 "pageSize": 9999,
                 "sourceType": "article",
