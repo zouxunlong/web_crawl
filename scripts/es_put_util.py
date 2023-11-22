@@ -302,36 +302,31 @@ def put_bt_data(input_path):
 
 def put_newslink(input_path):
 
-    ids=open("/home/xuanlong/web_crawl/documentIds_used1.txt").readlines()
-    ids=[item.strip() for item in ids]
-
     with open(input_path) as file_in:
         for i, line in enumerate(file_in):
-            if i<1259493:
-                continue
+            # if i<319500:
+            #     continue
             if i%20000==0:
                 print(i, flush=True)
             item = json.loads(line)
-            if item['documentid'] not in ids:
-                continue
-            text=item['bodyarticle'].replace("<br/>","\n").strip()
-            if text:
-                doc = {
-                    '_index': "newslink",
-                    '_id': item['documentid'],
-                    'text': text,
-                    'source': "en_straitstimes",
-                    'language_type': "en",
-                    'date': item['processingtime'][:10]
-                }
-                yield doc
+            if "bodyarticle" in item.keys():
+                text=item['bodyarticle'].replace("<br/>","\n").strip()
+                if text:
+                    doc = {
+                        '_index': "newslink",
+                        '_id': item['documentid'],
+                        'text': text,
+                        'source': "en_businesstimes",
+                        'language_type': "en",
+                        'date': item['publicationdate']
+                    }
+                    yield doc
     print(i, flush=True)
 
 
 
 
 res = bulk(client=es,
-           actions=put_newslink("/home/xuanlong/web_crawl/data/newslink/ST.jsonl"),
-           chunk_size=1
+           actions=put_newslink("/home/xuanlong/web_crawl/data/newslink/BT.jsonl"),
            )
 print(res, flush=True)

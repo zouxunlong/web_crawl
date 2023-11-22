@@ -143,7 +143,7 @@ def main(srcs,
 
 if __name__ == "__main__":
     print(os.getpid(), flush=True)
-    main(srcs=['ta'],
+    main(srcs=['ms'],
          tgts=['en'],
          worker=6,
          input_dir="/home/xuanlong/web_crawl/data/news_article",
