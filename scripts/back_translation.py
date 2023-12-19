@@ -132,6 +132,8 @@ def main(srcs,
             for file in files:
                 if not file.endswith(".jsonl"):
                     continue
+                if file.endswith(".en.jsonl"):
+                    continue
                 input_file = os.path.join(rootdir, file)
                 for tgt_lang in tgts:
                     output_file = os.path.join(rootdir, file.replace('.jsonl', '.'+tgt_lang+'.jsonl'))
@@ -149,3 +151,5 @@ if __name__ == "__main__":
          input_dir="/home/xuanlong/web_crawl/data/news_article",
          )
     print("finished all", flush=True)
+
+

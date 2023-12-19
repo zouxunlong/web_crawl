@@ -1,21 +1,19 @@
+import os
+import json
 
-# import os
-# ids=open("/home/xuanlong/web_crawl/documentIds.txt").readlines()
-# length=0
-# for rootdir, dirs, files in os.walk("/home/xuanlong/web_crawl/newslink"):
+
+# for root_dir, dirs, files in os.walk("/home/xuanlong/web_crawl/data/newslink"):
+#     files.sort()
 #     for file in files:
-#         ids_set=open(os.path.join(rootdir, file)).readlines()
-#         ids_set=set(ids_set)
-#         open(os.path.join(rootdir, file), "w", encoding="utf8").write("".join(ids_set))
-#         length+=len(ids_set)
+#         with open(os.path.join(root_dir,file)) as file_in:
+#             for line in file_in:
+#                 item=json.loads(line)
+#                 print(os.path.join(root_dir,file), item["language"])
+#                 break
 
-# print(len(ids))
-# print(length)
 
-ids_set=open("/home/xuanlong/web_crawl/documentIds_ST.txt").readlines()
-print(len(ids_set))
-
-ids_set=set(ids_set)
-print(len(ids_set))
-
-open("/home/xuanlong/web_crawl/newslink/documentIds.txt", "w", encoding="utf8").write("".join(ids_set))
+with open("/home/xuanlong/web_crawl/data/newslink/BM_ms.jsonl") as file_in:
+    for line in file_in:
+        item=json.loads(line)
+        print(item)
+        break

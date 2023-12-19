@@ -304,8 +304,6 @@ def put_newslink(input_path):
 
     with open(input_path) as file_in:
         for i, line in enumerate(file_in):
-            # if i<319500:
-            #     continue
             if i%20000==0:
                 print(i, flush=True)
             item = json.loads(line)
@@ -313,20 +311,19 @@ def put_newslink(input_path):
                 text=item['bodyarticle'].replace("<br/>","\n").strip()
                 if text:
                     doc = {
-                        '_index': "newslink",
+                        '_index': "newslink_zh",
                         '_id': item['documentid'],
                         'text': text,
-                        'source': "en_businesstimes",
-                        'language_type': "en",
+                        'source': "zh_zaobao",
+                        'language_type': "zh",
                         'date': item['publicationdate']
                     }
                     yield doc
     print(i, flush=True)
 
 
-
-
 res = bulk(client=es,
-           actions=put_newslink("/home/xuanlong/web_crawl/data/newslink/BT.jsonl"),
+           actions=put_newslink("/home/xuanlong/web_crawl/data/newslink/ZB_zh.jsonl"),
            )
+
 print(res, flush=True)
