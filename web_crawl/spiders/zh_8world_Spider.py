@@ -81,8 +81,8 @@ def main():
                     "encoding": "utf8",
                 }
             },
-            "DOWNLOAD_DELAY" : 0.1,
-            # "AUTOTHROTTLE_ENABLED": True,
+            # "DOWNLOAD_DELAY" : 0.1,
+            "AUTOTHROTTLE_ENABLED": True,
             "LOG_LEVEL": "INFO",
             "USER_AGENT": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.88 Safari/537.36",
         }
