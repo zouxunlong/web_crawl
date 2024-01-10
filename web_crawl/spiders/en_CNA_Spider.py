@@ -49,6 +49,15 @@ class en_CNA_Spider(scrapy.Spider):
     def parse_article(self, response, *args, **kwargs):
         date = kwargs["date"]
         title = kwargs["title"]
+        source_node=response.xpath('//div[@class="source source--with-label"]')
+        if not source_node:
+            return
+        
+        source_text= source_node.xpath("./text()").get().strip()
+
+        if not source_text.startswith("Source: CNA"):
+            return
+
         text_nodes = response.xpath('//div[@class="text-long"]/p')
         texts=[''.join(text_node.xpath(".//text()").getall()).replace('\n', " ") for text_node in text_nodes if not text_node.xpath('.//script')]
         text = "\n".join([t.strip() for t in texts if t.strip()]).replace(u'\xa0', " ").replace(u'\u3000', " ")
