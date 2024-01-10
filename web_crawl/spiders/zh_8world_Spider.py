@@ -39,8 +39,7 @@ class zh_8world_Spider(scrapy.Spider):
                                   callback=self.parse_article,
                                   cb_kwargs={"date": date, "title": title})
 
-        next_page_link = response.xpath(
-            '//a[@title="Go to next page"]/@href').get()
+        next_page_link = response.xpath('//a[@title="Go to next page"]/@href').get()
         if next_page_link:
             yield response.follow(next_page_link, callback=self.parse)
 
@@ -48,12 +47,15 @@ class zh_8world_Spider(scrapy.Spider):
 
         date = kwargs["date"]
         title = kwargs["title"]
+        byline_node=response.xpath('//a[@role="article"]')
+        if not byline_node:
+            return
 
         text_nodes = response.xpath('//div[@class="text-long"]//p')
+
         texts = [''.join(text_node.xpath("./text()").getall()).replace('\n', " ")
                  for text_node in text_nodes if not text_node.xpath('.//script')]
-        text = "\n".join([t.strip() for t in texts if t.strip()]).replace(
-            u'\xa0', " ").replace(u'\u3000', " ")
+        text = "\n".join([t.strip() for t in texts if t.strip()]).replace(u'\xa0', " ").replace(u'\u3000', " ")
 
         if text and title:
             yield {"date": date,
@@ -79,7 +81,8 @@ def main():
                     "encoding": "utf8",
                 }
             },
-            "AUTOTHROTTLE_ENABLED": True,
+            "DOWNLOAD_DELAY" : 0.1,
+            # "AUTOTHROTTLE_ENABLED": True,
             "LOG_LEVEL": "INFO",
             "USER_AGENT": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.88 Safari/537.36",
         }
