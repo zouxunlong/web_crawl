@@ -84,43 +84,42 @@ def thai_detected(text):
     return False
 
 
-def put_news_article(input_path="/home/xuancong/web_crawl/data"):
-    for rootdir, dirs, files in os.walk(input_path):
-        source = rootdir.split("/")[-1]
-        language_type = source[:2]
-        files.sort(reverse=True)
-        if language_type in ['en', 'zh', 'vi', 'th', 'ta', 'ms', 'id']:
-            index = 'news_articles_'+language_type
-            for file in files:
-                if file.endswith('.jsonl'):
-                    input_file = os.path.join(rootdir, file)
-                    with open(input_file, encoding='utf8') as file_in:
-                        for line in file_in:
-                            item = json.loads(line)
+def put_news_article(input_file="/home/xuancong/web_crawl/data"):
+    source = 'zh_8world'
+    language_type = 'zh'
 
-                            item['text'] = unwanted_character_filtered(
-                                item['text'])
+    if language_type in ['en', 'zh', 'vi', 'th', 'ta', 'ms', 'id']:
+        index = 'news_articles_'+language_type
+        if input_file.endswith('.jsonl'):
+            with open(input_file, encoding='utf8') as file_in:
+                for i, line in enumerate(file_in):
+                    if i%2000==0:
+                        print(i, flush=True)
+                    item = json.loads(line)
 
-                            if 'ta' in [language_type] and not tamil_detected(item['text']):
-                                continue
-                            if 'vi' in [language_type] and not vietnamese_detected(item['text']):
-                                continue
-                            if 'zh' in [language_type] and not chinese_detected(item['text']):
-                                continue
-                            if not item['text'].strip():
-                                continue
+                    item['text'] = unwanted_character_filtered(
+                        item['text'])
 
-                            doc = {
-                                '_index': index,
-                                '_id': Simhash(item['text'], f=64, reg=r'[\S]').value,
-                                'language_type': language_type,
-                                'source': source,
-                                'title': item['title'],
-                                'text': item['text'],
-                                'date': item['date'],
-                            }
+                    if 'ta' in [language_type] and not tamil_detected(item['text']):
+                        continue
+                    if 'vi' in [language_type] and not vietnamese_detected(item['text']):
+                        continue
+                    if 'zh' in [language_type] and not chinese_detected(item['text']):
+                        continue
+                    if not item['text'].strip():
+                        continue
 
-                            yield doc
+                    doc = {
+                        '_index': index,
+                        '_id': Simhash(item['text'], f=64, reg=r'[\S]').value,
+                        'language_type': language_type,
+                        'source': source,
+                        'title': item['title'],
+                        'text': item['text'],
+                        'date': item['date'],
+                    }
+
+                    yield doc
 
 
 def put_forum_detik_id(input_path):
@@ -323,7 +322,7 @@ def put_newslink(input_path):
 
 
 res = bulk(client=es,
-           actions=put_newslink("/home/xuanlong/web_crawl/data/newslink/ZB_zh.jsonl"),
+           actions=put_news_article("/home/xuanlong/web_crawl/data/news_article/zh_8world/2014-01-12_2024-01-09.jsonl"),
            )
 
 print(res, flush=True)

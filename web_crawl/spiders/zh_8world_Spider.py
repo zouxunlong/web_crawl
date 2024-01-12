@@ -69,28 +69,3 @@ class zh_8world_Spider(scrapy.Spider):
     scrapy.utils.misc.warn_on_generator_with_return_value = warn_on_generator_with_return_value_stub
     scrapy.core.scraper.warn_on_generator_with_return_value = warn_on_generator_with_return_value_stub
 
-
-def main():
-
-    process = CrawlerProcess(
-        settings={
-            "FEEDS": {
-                "/home/xuanlong/web_crawl/data/news_article/%(name)s/%(start_date)s_%(end_date)s.jsonl": {
-                    "format": "jsonlines",
-                    "overwrite": True,
-                    "encoding": "utf8",
-                }
-            },
-            # "DOWNLOAD_DELAY" : 0.1,
-            "AUTOTHROTTLE_ENABLED": True,
-            "LOG_LEVEL": "INFO",
-            "USER_AGENT": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.88 Safari/537.36",
-        }
-    )
-    process.crawl(zh_8world_Spider, start_date=date.today() -
-                  timedelta(3650), end_date=date.today() - timedelta(1))
-    process.start()
-
-
-if __name__ == "__main__":
-    main()
