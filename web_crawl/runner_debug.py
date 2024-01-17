@@ -17,7 +17,7 @@ def crawl(start_date, end_date):
     # runner.crawl("en_BBC", start_date=start_date, end_date=end_date)
     # runner.crawl("en_Bernama", start_date=start_date, end_date=end_date)
     # runner.crawl("en_Chinadaily", start_date=start_date, end_date=end_date)
-    runner.crawl("en_CNA", start_date=start_date, end_date=end_date)
+    # runner.crawl("en_CNA", start_date=start_date, end_date=end_date)
     # runner.crawl("en_CNN", start_date=start_date, end_date=end_date)
     # runner.crawl("en_france24news", start_date=start_date, end_date=end_date)
     # runner.crawl("en_koreaherald", start_date=start_date, end_date=end_date)
@@ -34,7 +34,9 @@ def crawl(start_date, end_date):
     # runner.crawl("id_mediaindonesia", start_date=start_date, end_date=end_date)
     # runner.crawl("ms_Bernama", start_date=start_date, end_date=end_date)
     # runner.crawl("ms_Brudirect", start_date=start_date, end_date=end_date)
+    runner.crawl("ms_Berita", start_date=start_date, end_date=end_date)
     # runner.crawl("ta_BBC", start_date=start_date, end_date=end_date)
+    runner.crawl("ta_Seithi", start_date=start_date, end_date=end_date)
     # runner.crawl("ta_dinamani", start_date=start_date, end_date=end_date)
     # runner.crawl("ta_hindutamil", start_date=start_date, end_date=end_date)
     # runner.crawl("ta_oneindia", start_date=start_date, end_date=end_date)
@@ -52,12 +54,13 @@ def crawl(start_date, end_date):
     # runner.crawl("zh_uschinapress", start_date=start_date, end_date=end_date)
     # runner.crawl("zh_voachinese", start_date=start_date, end_date=end_date)
     # runner.crawl("zh_zaobao", start_date=start_date, end_date=end_date)
+    # runner.crawl("zh_8world", start_date=start_date, end_date=end_date)
     d=runner.join()
     d.addBoth(lambda _: reactor.stop())
     logger.info("crawl end once.............................")
     reactor.run()
 
 if __name__ == "__main__":
-    crawl(start_date=date.today() - timedelta(6), end_date=date.today() - timedelta(5))
+    crawl(start_date=date.today() - timedelta(6), end_date=date.today() - timedelta(1))
     logger.info("finished all.............................")
 
