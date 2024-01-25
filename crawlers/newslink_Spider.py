@@ -14,7 +14,7 @@ class newslink_Spider(scrapy.Spider):
     article_api = "https://api.newslink.sg/user/api/user/v1/download"
 
     def __init__(self):
-        self.documentIds = open(file="/home/xuanlong/web_crawl/newslink/ZB_rest.txt").readlines()
+        self.documentIds = open(file="/home/xuanlong/web_crawl/newslink/ME_rest.txt").readlines()
         self.cookies = COOKIES
 
     def start_requests(self):
@@ -35,7 +35,7 @@ class newslink_Spider(scrapy.Spider):
         data = json.loads(response.text)
         if "singleDocument" in data.keys() and data['singleDocument']:
             yield data['singleDocument']
-            open(file="/home/xuanlong/web_crawl/newslink/ZB_used.txt", mode="a", encoding="utf8").write(data['singleDocument']['documentid']+'\n')
+            open(file="/home/xuanlong/web_crawl/newslink/ME_used.txt", mode="a", encoding="utf8").write(data['singleDocument']['documentid']+'\n')
 
 
 def main():
@@ -44,7 +44,7 @@ def main():
     process = CrawlerProcess(
         settings={
             "FEEDS": {
-                '/home/xuanlong/web_crawl/data/newslink/ZB.jsonl': {
+                '/home/xuanlong/web_crawl/data/newslink/ME.jsonl': {
                     "format": "jsonlines",
                     "overwrite": False,
                     "encoding": "utf8",
