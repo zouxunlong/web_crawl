@@ -310,11 +310,11 @@ def put_newslink(input_path):
                 text=item['bodyarticle'].replace("<br/>","\n").strip()
                 if text:
                     doc = {
-                        '_index': "newslink_zh",
+                        '_index': "newslink_en",
                         '_id': item['documentid'],
                         'text': text,
-                        'source': "zh_zaobao",
-                        'language_type': "zh",
+                        'source': "en_mypaper",
+                        'language_type': "en",
                         'date': item['publicationdate']
                     }
                     yield doc
@@ -322,7 +322,7 @@ def put_newslink(input_path):
 
 
 res = bulk(client=es,
-           actions=put_news_article("/home/xuanlong/web_crawl/data/news_article/zh_8world/2014-01-12_2024-01-09.jsonl"),
+           actions=put_newslink("/home/xuanlong/web_crawl/data/newslink/ME_en.jsonl"),
            )
 
 print(res, flush=True)
