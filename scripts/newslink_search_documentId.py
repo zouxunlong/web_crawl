@@ -40,7 +40,7 @@ def main(
     source : str,
 ):
     with open(file="{}.txt".format(source), mode="a", encoding="utf8") as file:
-        for year in range(1991, 2025):
+        for year in range(2011, 2025):
             for month in range(1, 13):
                 fromDate = str(date(year, month, 1))
                 if month==12:
@@ -58,7 +58,7 @@ def main(
                         source
                     ],
                     "pageSize": 2000,
-                    "sourceType": "article",
+                    "sourceType": "online_article",
                     "digitalType": "article",
                     "pageNo": 1,
                     "company": [],
