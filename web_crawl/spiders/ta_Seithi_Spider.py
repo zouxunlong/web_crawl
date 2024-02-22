@@ -9,11 +9,11 @@ class ta_Seithi_Spider(scrapy.Spider):
     name = "ta_Seithi"
     allowed_domains = ["seithi.mediacorp.sg"]
     start_urls_0 = ["https://seithi.mediacorp.sg/api/v1/infinitelisting/786f6469-20ac-4ee4-a352-97e12efb9a39?_format=json&viewMode=infinite_scroll_listing&page=%d" %
-                    n for n in range(2100)]
+                    n for n in range(20)]
     start_urls_1 = ["https://seithi.mediacorp.sg/api/v1/infinitelisting/f48cc020-d24a-402c-956e-4ed5d5dbc703?_format=json&viewMode=infinite_scroll_listing&page=%d" %
-                    n for n in range(1950)]
+                    n for n in range(20)]
     start_urls_2 = ["https://seithi.mediacorp.sg/api/v1/infinitelisting/4eca4b28-b30a-4a69-886b-fe69d1110e70?_format=json&viewMode=infinite_scroll_listing&page=%d" %
-                    n for n in range(4100)]
+                    n for n in range(20)]
     start_urls = start_urls_0+start_urls_1+start_urls_2
 
     def __init__(self, start_date, end_date):

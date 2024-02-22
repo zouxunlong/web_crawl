@@ -5,7 +5,7 @@ import scrapy
 class id_MediaIndonedia_Spider(scrapy.Spider):
     name = 'id_mediaindonesia'
     allowed_domains = ['mediaindonesia.com']
-    start_urls = ['https://mediaindonesia.com/read/terkini']
+    start_urls = ['https://mediaindonesia.com/indeks']
     translate_month = {
         'Januari': 'Jan',
         'Februari': 'Feb',
@@ -28,14 +28,11 @@ class id_MediaIndonedia_Spider(scrapy.Spider):
         self.end_time = datetime.combine(end_date, time())
 
     def parse(self, response):
-        articles = response.xpath('//div[@class="article-big"]')
+        articles = response.xpath('//ul[@class="list-3"]/li/div[@class="text"]')
 
         for article in articles:
-            date_time_list = article.xpath(
-                './/span[@class="meta"]/a[2]/text()').get().split()
-            date_time_list[2] = self.translate_month[date_time_list[2]]
-            date_time_str = ' '.join(date_time_list[1:4])
-            date_time = datetime.strptime(date_time_str, "%d %b %Y,")
+            date_time_str = article.xpath('.//span/text()').get()
+            date_time = datetime.strptime(date_time_str, "%d/%m/%Y %H:%M")
 
             if date_time < self.start_time:
                 return
@@ -43,21 +40,21 @@ class id_MediaIndonedia_Spider(scrapy.Spider):
                 continue
 
             date = str(date_time.date())
-            url = article.xpath('.//h2/a/@href').get()
-            title = article.xpath('.//h2/a/@title').get()
+            url = article.xpath('.//h3/a/@href').get()
+            title = article.xpath('.//h3/a/@title').get()
             
             yield scrapy.Request(url=url,
                                     callback=self.parse_article,
                                     cb_kwargs={"date": date, "title": title})
 
-        next_page_link = response.xpath('//a[@rel="next"]/@href').get()
+        next_page_link = response.xpath('//div[@class="pagination"]/a[contains(text(), "NEXT")]/@href').get()
         if next_page_link:
             yield scrapy.Request(next_page_link, callback=self.parse)
 
     def parse_article(self, response, *args, **kwargs):
         date = kwargs["date"]
         title = kwargs["title"]
-        text_nodes = response.xpath('//div[@itemprop="articleBody"]/p')
+        text_nodes = response.xpath('//div[@class="article"]/*')
         texts=[''.join(text_node.xpath(".//text()").getall()).replace('\n', " ") for text_node in text_nodes if not text_node.xpath('.//script')]
         text = "\n".join([t.strip() for t in texts if t.strip()]).replace(u'\xa0', " ").replace(u'\u3000', " ")
         if text and title:

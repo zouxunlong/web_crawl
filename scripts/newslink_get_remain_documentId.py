@@ -9,5 +9,5 @@ def remove_used(domain):
 
 
 if __name__=="__main__":
-    remove_used("STO")
+    remove_used("BTO")
 

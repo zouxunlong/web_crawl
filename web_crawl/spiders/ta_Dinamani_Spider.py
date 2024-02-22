@@ -1,11 +1,14 @@
 import scrapy
 from datetime import time, datetime
-
+import json
 
 class ta_Dinamani_Spider(scrapy.Spider):
     name = 'ta_dinamani'
     allowed_domains = ['dinamani.com']
-    start_urls = ['https://www.dinamani.com/latest-news']
+    start_urls = ['https://www.dinamani.com/api/v1/collections/latest-news?item-type=story&limit=100&offset=0']
+    url_base = 'https://www.dinamani.com/api/v1/collections/latest-news?item-type=story&limit=100&offset='
+    offset=0
+    
 
     def __init__(self, start_date, end_date):
         self.start_date = start_date
@@ -15,12 +18,12 @@ class ta_Dinamani_Spider(scrapy.Spider):
 
     def parse(self, response):
 
-        articles = response.xpath('//div[@class="section-list-item "]')
+        data = json.loads(response.body)
 
-        for article in articles:
+        for article in data["items"]:
 
-            date_time_str = article.xpath('.//p[@class="post_time"]/text()').get()
-            date_time = datetime.strptime(date_time_str, "%d-%m-%Y")
+            timestamp = article["story"]["updated-at"]//1000
+            date_time = datetime.fromtimestamp(timestamp)
 
             if date_time < self.start_time:
                 return
@@ -28,16 +31,18 @@ class ta_Dinamani_Spider(scrapy.Spider):
                 continue
 
             date = str(date_time.date())
-            title = article.xpath(".//h5/a/text()").get()
-            url=article.xpath('.//h5/a/@href').get()
+            title = article["story"]["headline"]
+            url=article["story"]["url"]
+
 
             yield response.follow(url=url,
                                     callback=self.parse_article,
                                     cb_kwargs={"date": date, "title": title})
 
-        next_page_link = response.xpath('//a[text()=">"]/@href').get()
+        self.offset+=100
+        next_page_link = self.url_base+str(self.offset)
         if next_page_link:
-            yield scrapy.Request(response.urljoin(next_page_link), callback=self.parse)
+            yield scrapy.Request(next_page_link, callback=self.parse)
 
 
     def parse_article(self, response, *args, **kwargs):
@@ -45,7 +50,7 @@ class ta_Dinamani_Spider(scrapy.Spider):
         date = kwargs["date"]
         title = kwargs["title"]
 
-        text_nodes = response.xpath('//div[@id="storyContent"]/p')
+        text_nodes = response.xpath('//div[@data-test-id="text"]/p')
         texts=[''.join(text_node.xpath(".//text()").getall()).replace('\n', " ") for text_node in text_nodes if not text_node.xpath('.//script')]
         text = "\n".join([t.strip() for t in texts if t.strip()]).replace(u'\xa0', " ").replace(u'\u3000', " ")
         

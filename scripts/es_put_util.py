@@ -307,14 +307,15 @@ def put_newslink(input_path):
                 print(i, flush=True)
             item = json.loads(line)
             if "bodyarticle" in item.keys():
-                text=item['bodyarticle'].replace("<br/>","\n").strip()
+                bodyarticle=item['bodyarticle']
+                text= re.sub('<br[^>]*/>', "\n", bodyarticle, 0, re.I).strip().replace('\xa0', ' ').replace('\u3000', ' ')
                 if text:
                     doc = {
-                        '_index': "newslink_en",
+                        '_index': "newslink_zh",
                         '_id': item['documentid'],
                         'text': text,
-                        'source': "en_mypaper",
-                        'language_type': "en",
+                        'source': "zh_zaobaoOnline",
+                        'language_type': "zh",
                         'date': item['publicationdate']
                     }
                     yield doc
@@ -322,7 +323,7 @@ def put_newslink(input_path):
 
 
 res = bulk(client=es,
-           actions=put_newslink("/home/xuanlong/web_crawl/data/newslink/ME_en.jsonl"),
+           actions=put_newslink("/home/xuanlong/web_crawl/data/newslink/online/ZBO.jsonl"),
            )
 
 print(res, flush=True)
