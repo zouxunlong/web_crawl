@@ -9,14 +9,15 @@ import os
 def schedule_next_crawl(null):
     tomorrow = datetime.combine(date.today() + timedelta(1), time())
     sleep_time = (tomorrow - datetime.now()).total_seconds()
+    print("{} scheduled".format(str(tomorrow)), flush=True)
     reactor.callLater(sleep_time, crawl)
 
 def crawl():
     
     settings = get_project_settings()
-    settings.set('LOG_FILE', "./data/{}.log".format(str(date.today())))
+    settings.set('LOG_FILE', "./log/daily/{}.log".format(str(date.today())))
     configure_logging(settings)
-    logger.info("crawl start once.............................")
+    print("{} start.....".format(str(date.today())), flush=True)
 
     runner = CrawlerRunner(settings)
     runner.crawl("en_ABC", start_date=date.today() - timedelta(2), end_date=date.today() - timedelta(1))
@@ -32,6 +33,7 @@ def crawl():
     runner.crawl("en_techcrunch", start_date=date.today() - timedelta(2), end_date=date.today() - timedelta(1))
     runner.crawl("en_theguardian", start_date=date.today() - timedelta(2), end_date=date.today() - timedelta(1))
     runner.crawl("en_thenational", start_date=date.today() - timedelta(2), end_date=date.today() - timedelta(1))
+    runner.crawl("id_kompas", start_date=date.today() - timedelta(2), end_date=date.today() - timedelta(1))
     runner.crawl("id_koranjakarta", start_date=date.today() - timedelta(2), end_date=date.today() - timedelta(1))
     runner.crawl("id_mediaindonesia", start_date=date.today() - timedelta(2), end_date=date.today() - timedelta(1))
     runner.crawl("ms_Bernama", start_date=date.today() - timedelta(2), end_date=date.today() - timedelta(1))

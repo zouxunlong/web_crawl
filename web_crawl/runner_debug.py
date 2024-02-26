@@ -3,12 +3,17 @@ from scrapy.crawler import CrawlerRunner
 from scrapy.utils.log import configure_logging, logger
 from twisted.internet import reactor
 from scrapy.utils.project import get_project_settings
+import fire
 
 
-def crawl(start_date, end_date):
+def crawl(
+    start_date: date = date(2000, 10, 27),
+    end_date: date = date.today() - timedelta(1),
+    name: str = ""
+):
 
     settings = get_project_settings()
-    settings.set('LOG_FILE', "./data/{}.log".format(str(end_date + timedelta(1))))
+    settings.set('LOG_FILE', "./log/{}_debug.log".format(name))
     configure_logging(settings)
     logger.info("crawl start once.............................")
 
@@ -26,13 +31,18 @@ def crawl(start_date, end_date):
     # runner.crawl("en_techcrunch", start_date=start_date, end_date=end_date)
     # runner.crawl("en_theguardian", start_date=start_date, end_date=end_date)
     # runner.crawl("en_thenational", start_date=start_date, end_date=end_date)
+    # runner.crawl("id_kompas", start_date=start_date, end_date=end_date)
+    # runner.crawl("id_detik", start_date=start_date, end_date=end_date)
+    # runner.crawl("id_tempo", start_date=start_date, end_date=end_date)
+    runner.crawl(name, start_date=start_date, end_date=end_date)
+    # runner.crawl("id_cnnindonesia", start_date=start_date, end_date=end_date)
     # runner.crawl("id_koranjakarta", start_date=start_date, end_date=end_date)
     # runner.crawl("id_mediaindonesia", start_date=start_date, end_date=end_date)
     # runner.crawl("ms_Bernama", start_date=start_date, end_date=end_date)
     # runner.crawl("ms_Brudirect", start_date=start_date, end_date=end_date)
     # runner.crawl("ms_Berita", start_date=start_date, end_date=end_date)
     # runner.crawl("ta_Seithi", start_date=start_date, end_date=end_date)
-    runner.crawl("ta_dinamani", start_date=start_date, end_date=end_date)
+    # runner.crawl("ta_dinamani", start_date=start_date, end_date=end_date)
     # runner.crawl("ta_hindutamil", start_date=start_date, end_date=end_date)
     # runner.crawl("ta_oneindia", start_date=start_date, end_date=end_date)
     # runner.crawl("vi_nguoiviet", start_date=start_date, end_date=end_date)
@@ -46,12 +56,16 @@ def crawl(start_date, end_date):
     # runner.crawl("zh_voachinese", start_date=start_date, end_date=end_date)
     # runner.crawl("zh_zaobao", start_date=start_date, end_date=end_date)
     # runner.crawl("zh_8world", start_date=start_date, end_date=end_date)
-    d=runner.join()
+    d = runner.join()
     d.addBoth(lambda _: reactor.stop())
     logger.info("crawl end once.............................")
     reactor.run()
 
-if __name__ == "__main__":
-    crawl(start_date=date.today() - timedelta(22), end_date=date.today() - timedelta(1))
-    logger.info("finished all.............................")
 
+if __name__ == "__main__":
+    import os
+    print(os.getpid(), flush=True)
+
+    fire.Fire(crawl)
+
+    logger.info("finished all.............................")
