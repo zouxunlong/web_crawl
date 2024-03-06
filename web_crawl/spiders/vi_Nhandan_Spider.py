@@ -6,7 +6,7 @@ import json
 class vi_Nhandan_Spider(scrapy.Spider):
     name = 'vi_nhandan'
     allowed_domains = ['nhandan.vn']
-    custom_settings = {"DOWNLOAD_TIMEOUT": 60, "DOWNLOAD_DELAY": 0.5}
+    custom_settings = {"DOWNLOAD_TIMEOUT": 60, "DOWNLOAD_DELAY": 0.5, "ROBOTSTXT_OBEY": False}
 
     start_urls = ['https://nhandan.vn/api/morenews-latest-0-0.html?phrase=']
 

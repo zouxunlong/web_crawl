@@ -44,7 +44,6 @@ def crawl():
     runner.crawl("ta_oneindia", start_date=date.today() - timedelta(2), end_date=date.today() - timedelta(1))
     runner.crawl("ta_Seithi", start_date=date.today() - timedelta(2), end_date=date.today() - timedelta(1))
     runner.crawl("vi_nguoiviet", start_date=date.today() - timedelta(2), end_date=date.today() - timedelta(1))
-    runner.crawl("vi_nhandan", start_date=date.today() - timedelta(2), end_date=date.today() - timedelta(1))
     runner.crawl("vi_tuoitre", start_date=date.today() - timedelta(2), end_date=date.today() - timedelta(1))
     runner.crawl("zh_CCTV", start_date=date.today() - timedelta(2), end_date=date.today() - timedelta(1))
     runner.crawl("zh_Chinadaily", start_date=date.today() - timedelta(2), end_date=date.today() - timedelta(1))

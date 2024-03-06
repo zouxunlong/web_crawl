@@ -7,9 +7,9 @@ import fire
 
 
 def crawl(
-    start_date: date = date(2000, 10, 27),
+    start_date: date = date(2014, 1, 1),
     end_date: date = date.today() - timedelta(1),
-    name: str = ""
+    name: str = "ms_Utusanborneo"
 ):
 
     settings = get_project_settings()

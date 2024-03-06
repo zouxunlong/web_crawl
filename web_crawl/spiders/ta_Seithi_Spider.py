@@ -15,6 +15,7 @@ class ta_Seithi_Spider(scrapy.Spider):
     start_urls_2 = ["https://seithi.mediacorp.sg/api/v1/infinitelisting/4eca4b28-b30a-4a69-886b-fe69d1110e70?_format=json&viewMode=infinite_scroll_listing&page=%d" %
                     n for n in range(20)]
     start_urls = start_urls_0+start_urls_1+start_urls_2
+    custom_settings = {"ROBOTSTXT_OBEY": False}
 
     def __init__(self, start_date, end_date):
         self.start_date = start_date

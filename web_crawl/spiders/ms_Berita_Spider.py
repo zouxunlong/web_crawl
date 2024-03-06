@@ -10,6 +10,9 @@ class ms_Berita_Spider(scrapy.Spider):
     allowed_domains = ["berita.mediacorp.sg"]
     start_urls = ["https://berita.mediacorp.sg/api/v1/infinitelisting/4d51f221-431a-4dbb-8c92-a3d754ce361c?_format=json&viewMode=infinite_scroll_listing&page=%d" %
                     n for n in range(4550)]
+    custom_settings = {"ROBOTSTXT_OBEY": False}
+
+
     def __init__(self, start_date, end_date):
         self.start_date = start_date
         self.end_date = end_date
