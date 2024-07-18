@@ -3,7 +3,7 @@ from elasticsearch import Elasticsearch
 from elasticsearch.helpers import scan
 
 ES_CONNECTION_STRING = "http://10.2.56.247:9200"
-es = Elasticsearch(hosts=ES_CONNECTION_STRING, http_auth=('elastic', 'elastic_pw')).options(ignore_status=400, request_timeout=30)
+es = Elasticsearch(hosts=ES_CONNECTION_STRING, http_auth=('viewer', '1234abcd')).options(ignore_status=400, request_timeout=30)
 
 
 def get_all_data(context_variables):
@@ -52,33 +52,17 @@ def get_all_data(context_variables):
     if selected_last_commit_bys:
         filter.append({"terms": {"last_commit_by": selected_last_commit_bys}})
 
-    # response = es.search(index=selected_data_pool,
-    #                      query={"match_all": {}},
-    #                      stored_fields=[],
-    #                      track_total_hits=True)
-    
-    data_generator = scan(client=es,
-                          query={"query": {"match_all": {}}},
-                          stored_fields=[],
-                          index=selected_data_pool,
-                          )
-    return data_generator
 
+    response = scan(client=es,
+                    query={"query": {"bool": {"filter": filter}}},
+                    index=selected_data_pool,
+                    )
 
-def main(context_variables):
+    return response
 
-    # response = get_all_data(context_variables)
-    # data = [item['_id'] for item in response["hits"]["hits"]]
-    
-    data_generator = get_all_data(context_variables)
-    with open("documentIds_used.txt", mode="a", encoding="utf8") as file:
-        for item in data_generator:
-            file.write(item['_id']+"\n")
-    
-    print("finished all", flush=True)
 
 if __name__=="__main__":
-    context_variables = {"selected_data_pool": 'newslink',
+    context_variables = {"selected_data_pool": 'news_articles_zh',
                          "query": '',
                          "selected_language_types": [],
                          "selected_sources": [],
@@ -87,4 +71,7 @@ if __name__=="__main__":
                          "selected_custom_tags": [],
                          "selected_last_commit_bys": [],
                          }
-    main(context_variables)
+    response=get_all_data(context_variables)
+    with open("zh.jsonl", mode="a", encoding="utf8") as file:
+        for item in response:
+            file.write(json.dumps(item['_source'], ensure_ascii=False)+"\n")
