@@ -6,7 +6,7 @@ from elasticsearch.helpers import bulk
 import os
 
 
-ES_CONNECTION_STRING = "http://10.2.56.44:9200"
+ES_CONNECTION_STRING = "http://10.2.56.42:9200"
 es = Elasticsearch(hosts=ES_CONNECTION_STRING, http_auth=(
     'elastic', 'elastic_pw')).options(ignore_status=400, request_timeout=30)
 
@@ -93,7 +93,7 @@ def put_news_article(input_file="/home/xuancong/web_crawl/data"):
         if input_file.endswith('.jsonl'):
             with open(input_file, encoding='utf8') as file_in:
                 for i, line in enumerate(file_in):
-                    if i%2000==0:
+                    if i % 2000 == 0:
                         print(i, flush=True)
                     item = json.loads(line)
 
@@ -245,12 +245,12 @@ def transfer_kaskus_id(input_path):
 
 def transfer_hardwarezone_en(input_path, output_path):
 
-    with open(input_path, encoding='utf8') as file_in,\
-         open(output_path, 'w', encoding='utf8') as file_out:
+    with open(input_path, encoding='utf8') as file_in, \
+            open(output_path, 'w', encoding='utf8') as file_out:
         for i, line in enumerate(file_in):
             item = json.loads(line)
             if item['post_text'].strip() and item['thread_url'].strip() and item['channel_title'].strip() and item['thread_title'].strip():
-                item['text']=item.pop('post_text')
+                item['text'] = item.pop('post_text')
                 file_out.write(json.dumps(item)+"\n")
         print(i, flush=True)
 
@@ -261,7 +261,7 @@ def put_bt_data(input_path):
         files.sort(reverse=True)
         index = 'bt_data'
         for file in files:
-            if len(file.split('.'))!=3:
+            if len(file.split('.')) != 3:
                 continue
             language_type = file.split('.')[-1]
             if language_type not in ['th2en']:
@@ -299,31 +299,43 @@ def put_bt_data(input_path):
                     yield doc
 
 
-def put_newslink(input_path):
+def put_newslink(input_path, index, src, lang):
 
     with open(input_path) as file_in:
         for i, line in enumerate(file_in):
-            if i%20000==0:
+            if i % 20000 == 0:
                 print(i, flush=True)
             item = json.loads(line)
             if "bodyarticle" in item.keys():
-                bodyarticle=item['bodyarticle']
-                text= re.sub('<br[^>]*/>', "\n", bodyarticle, 0, re.I).strip().replace('\xa0', ' ').replace('\u3000', ' ')
+                bodyarticle = item['bodyarticle']
+                text = re.sub('<br[^>]*/>', "\n", bodyarticle, 0,
+                              re.I).strip().replace('\xa0', ' ').replace('\u3000', ' ')
                 if text:
                     doc = {
-                        '_index': "newslink_zh",
+                        '_index': index,
                         '_id': item['documentid'],
                         'text': text,
-                        'source': "zh_zaobaoOnline",
-                        'language_type': "zh",
+                        'source': src,
+                        'language_type': lang,
                         'date': item['publicationdate']
                     }
                     yield doc
-    print(i, flush=True)
 
 
-res = bulk(client=es,
-           actions=put_newslink("/home/xuanlong/web_crawl/data/newslink/online/ZBO.jsonl"),
-           )
+if __name__ == "__main__":
 
-print(res, flush=True)
+    mapping_src=json.load(open("/home/xuanlong/web_crawl/mapping_src.json"))
+    mapping_lang=json.load(open("/home/xuanlong/web_crawl/mapping_lang.json"))
+
+    for root, dirs, files in os.walk("/home/xuanlong/web_crawl/data/newslink"):
+        for file in files:
+            media=file.split(".")[-3]
+            src=mapping_src[media]
+            lang=mapping_lang[media]
+            index="newslink_{}".format(lang)
+            res = bulk(client=es,
+                       actions=put_newslink(os.path.join(root, file), index, src, lang)
+                       )
+            print("complete {}".format(file), flush=True)
+            print(res, flush=True)
+    print("complete all".format(file), flush=True)

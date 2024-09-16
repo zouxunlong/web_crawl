@@ -14,17 +14,18 @@ class newslink_Spider(scrapy.Spider):
     handle_httpstatus_list = [401]
     article_api = "https://api.newslink.sg/user/api/user/v1/download"
 
-    def __init__(self, source):
-        self.documentIds = open(file="/home/xuanlong/web_crawl/newslink_ids/online/{}_rest.txt".format(source)).readlines()
+    def __init__(self, file_ids):
+        self.documentIds = open(file="/home/xuanlong/web_crawl/newslink_ids/rest_ids/{}".format(file_ids)).readlines()
         self.cookies = COOKIES
-        self.source = source
+        self.digitalType = "online_article" if file_ids.split(".")[0].endswith("O") else "article"
+        self.file_ids = file_ids
 
     def start_requests(self):
         for documentId in self.documentIds:
             article_body = {
                 "digitalType": "article",
+                "sourceType": self.digitalType,
                 "documentId": documentId.strip(),
-                "sourceType": "online_article",
                 "keywords": ""
             }
             yield Request(self.article_api, callback=self.parse, method="POST", cookies=self.cookies, body=json.dumps(article_body), dont_filter=True)
@@ -37,30 +38,30 @@ class newslink_Spider(scrapy.Spider):
         data = json.loads(response.text)
         if "singleDocument" in data.keys() and data['singleDocument']:
             yield data['singleDocument']
-            open(file="/home/xuanlong/web_crawl/newslink_ids/online/{}_used.txt".format(self.source), mode="a", encoding="utf8").write(data['singleDocument']['documentid']+'\n')
+            open(file="/home/xuanlong/web_crawl/newslink_ids/used_ids/{}".format(self.file_ids), mode="a", encoding="utf8").write(data['singleDocument']['documentid']+'\n')
 
 
 def main(
-    source : str,
+    file_ids : str
 ):
     import os
     print(os.getpid(), flush=True)
     process = CrawlerProcess(
         settings={
             "FEEDS": {
-                '/home/xuanlong/web_crawl/data/newslink/online/{}.jsonl'.format(source): {
+                '/home/xuanlong/web_crawl/data/newslink/{}'.format(file_ids.replace(".txt", ".jsonl")): {
                     "format": "jsonlines",
                     "overwrite": False,
                     "encoding": "utf8",
                 },
             },
-            # "AUTOTHROTTLE_ENABLED": True,
-            "DOWNLOAD_DELAY" : 0.03,
+            "AUTOTHROTTLE_ENABLED": True,
+            # "DOWNLOAD_DELAY" : 0.05,
             "LOG_LEVEL": "INFO",
             "USER_AGENT": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.88 Safari/537.36",
         }
     )
-    process.crawl(newslink_Spider, source)
+    process.crawl(newslink_Spider, file_ids)
     process.start()
 
 
